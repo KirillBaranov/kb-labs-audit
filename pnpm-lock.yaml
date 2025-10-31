@@ -118,6 +118,9 @@ importers:
       '@kb-labs/cli-core':
         specifier: link:../../../kb-labs-cli/packages/core
         version: link:../../../kb-labs-cli/packages/core
+      '@kb-labs/core':
+        specifier: link:../../../kb-labs-core
+        version: link:../../../kb-labs-core
       '@kb-labs/shared-cli-ui':
         specifier: link:../../../kb-labs-shared/packages/cli-ui
         version: link:../../../kb-labs-shared/packages/cli-ui
@@ -149,6 +152,9 @@ importers:
 
   packages/audit-core:
     dependencies:
+      '@kb-labs/core':
+        specifier: link:../../../kb-labs-core
+        version: link:../../../kb-labs-core
       '@kb-labs/shared-profiles':
         specifier: link:../../../kb-labs-shared/packages/profiles
         version: link:../../../kb-labs-shared/packages/profiles
@@ -174,21 +180,6 @@ importers:
       typescript:
         specifier: ^5
         version: 5.9.3
-      vitest:
-        specifier: ^3
-        version: 3.2.4(@types/node@24.9.2)
-
-  packages/package-name:
-    devDependencies:
-      '@kb-labs/devkit':
-        specifier: github:KirillBaranov/kb-labs-devkit#main
-        version: https://codeload.github.com/KirillBaranov/kb-labs-devkit/tar.gz/5dd910147b8c09742ca13aeb2ea6aba5ffc5159b(@typescript-eslint/parser@8.46.2(eslint@9.38.0)(typescript@5.9.3))(eslint@9.38.0)(tsup@8.5.0(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1))(typescript-eslint@8.46.2(eslint@9.38.0)(typescript@5.9.3))(typescript@5.9.3)(vitest@3.2.4(@types/node@24.9.2))
-      tsup:
-        specifier: ^8
-        version: 8.5.0(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
-      tsx:
-        specifier: ^4.20.5
-        version: 4.20.6
       vitest:
         specifier: ^3
         version: 3.2.4(@types/node@24.9.2)
@@ -4701,6 +4692,7 @@ snapshots:
       get-tsconfig: 4.13.0
     optionalDependencies:
       fsevents: 2.3.3
+    optional: true
 
   type-check@0.4.0:
     dependencies:
