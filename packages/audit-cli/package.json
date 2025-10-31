@@ -42,6 +42,7 @@
     "@kb-labs/audit-checks": "link:../audit-checks",
     "@kb-labs/cli-core": "link:../../../kb-labs-cli/packages/core",
     "@kb-labs/cli-commands": "link:../../../kb-labs-cli/packages/commands",
+    "@kb-labs/core": "link:../../../kb-labs-core",
     "@kb-labs/shared-cli-ui": "link:../../../kb-labs-shared/packages/cli-ui",
     "globby": "^11.0.0",
     "yaml": "^2.5.1"
