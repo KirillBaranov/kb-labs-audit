@@ -1,5 +1,6 @@
-export { renderJson } from './json.js';
-export { renderMarkdown } from './markdown.js';
-export { renderText } from './text.js';
-export { renderHtml } from './html.js';
+export { renderJson } from './json';
+export { renderMarkdown } from './markdown';
+export { renderText } from './text';
+export { renderHtml } from './html';
+
 

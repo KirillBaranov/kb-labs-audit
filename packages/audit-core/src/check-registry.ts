@@ -2,8 +2,8 @@
  * Check adapter registry
  */
 
-import type { CheckId } from './types.js';
-import type { CheckAdapter } from './runner.js';
+import type { CheckId } from './types';
+import type { CheckAdapter } from './runner';
 
 /**
  * Registry of all available check adapters

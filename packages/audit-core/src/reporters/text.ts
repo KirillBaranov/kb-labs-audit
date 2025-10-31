@@ -3,7 +3,7 @@
  * Ultra-compact, CI-friendly format
  */
 
-import type { AuditReport } from '../types.js';
+import type { AuditReport } from '../types';
 
 /**
  * Render audit results as plain text
@@ -67,4 +67,5 @@ function formatTiming(ms: number): string {
   }
   return `${(ms / 1000).toFixed(2)}s`;
 }
+
 

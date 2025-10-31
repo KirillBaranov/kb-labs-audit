@@ -3,9 +3,10 @@
  * Merges: kb-labs.config.json → devkit profile → defaults
  */
 
-import { readFile, access } from 'node:fs/promises';
-import { join, dirname } from 'node:path';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { resolveProfile } from '@kb-labs/shared-profiles';
+import { findRepoRoot } from '@kb-labs/core';
 import type { AuditConfig, CoverageThresholds } from './types.js';
 
 const DEFAULT_COVERAGE_THRESHOLDS: CoverageThresholds = {
@@ -80,27 +81,6 @@ function extractCoverageThresholds(profile: any): CoverageThresholds | undefined
   }
 
   return undefined;
-}
-
-/**
- * Find repo root by looking for pnpm-workspace.yaml or .git
- */
-async function findRepoRoot(startDir: string): Promise<string> {
-  let current = startDir;
-  while (current !== dirname(current)) {
-    try {
-      await access(join(current, 'pnpm-workspace.yaml'));
-      return current;
-    } catch {
-      try {
-        await access(join(current, '.git'));
-        return current;
-      } catch {
-        current = dirname(current);
-      }
-    }
-  }
-  return startDir;
 }
 
 /**

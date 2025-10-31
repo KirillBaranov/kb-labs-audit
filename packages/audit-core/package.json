@@ -38,6 +38,7 @@
     "test:watch": "vitest -c ../../vitest.config.ts"
   },
   "dependencies": {
+    "@kb-labs/core": "link:../../../kb-labs-core",
     "@kb-labs/shared-profiles": "link:../../../kb-labs-shared/packages/profiles",
     "globby": "^11.0.0",
     "yaml": "^2.5.1"

@@ -3,7 +3,7 @@
  * Produces stable, deterministic JSON output
  */
 
-import type { AuditReport } from '../types.js';
+import type { AuditReport } from '../types';
 
 /**
  * Render audit results as JSON
@@ -57,4 +57,5 @@ function normalizeChecks(
 function round(value: number, decimals: number): number {
   return Math.round(value * Math.pow(10, decimals)) / Math.pow(10, decimals);
 }
+
 

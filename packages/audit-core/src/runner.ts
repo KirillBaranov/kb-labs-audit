@@ -2,8 +2,8 @@
  * Main audit runner - orchestrates check execution
  */
 
-import type { AuditConfig, AuditCheckResult, CheckId } from './types.js';
-import { aggregateResults } from './aggregator.js';
+import type { AuditConfig, AuditCheckResult, CheckId } from './types';
+import { aggregateResults } from './aggregator';
 
 export interface CheckAdapter {
   id: CheckId;
