@@ -1,8 +1,8 @@
 {
-  "name": "@kb-labs/product-template",
+  "name": "@kb-labs/audit",
   "version": "0.1.0",
   "private": true,
-  "description": "KB Labs product template — zero-config starter powered by @kb-labs/devkit.",
+  "description": "KB Labs Audit — unified quality audit framework for monorepo packages. Combines eslint, tsc, vitest, build, devlink, mind, and security checks into a single orchestrator with JSON/Markdown/Text/HTML reports.",
   "type": "module",
   "author": {
     "name": "Kirill Baranov",
@@ -11,12 +11,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kirill-baranov/kb-labs-product-template.git"
+    "url": "https://github.com/kirill-baranov/kb-labs-audit.git"
   },
   "bugs": {
-    "url": "https://github.com/kirill-baranov/kb-labs-product-template/issues"
+    "url": "https://github.com/kirill-baranov/kb-labs-audit/issues"
   },
-  "homepage": "https://github.com/kirill-baranov/kb-labs-product-template#readme",
+  "homepage": "https://github.com/kirill-baranov/kb-labs-audit#readme",
   "workspaces": [
     "apps/*",
     "packages/*"
