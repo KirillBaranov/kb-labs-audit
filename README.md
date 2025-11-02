@@ -1,42 +1,22 @@
-# @kb-labs/audit
+# KB Labs Audit (@kb-labs/audit)
 
-[![npm version](https://img.shields.io/npm/v/@kb-labs/audit.svg?style=flat-square)](https://www.npmjs.com/package/@kb-labs/audit)
-[![Node.js](https://img.shields.io/badge/Node.js-20+-green.svg?style=flat-square)](https://nodejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg?style=flat-square)](https://www.typescriptlang.org/)
-[![ESM](https://img.shields.io/badge/Module-ESM-purple.svg?style=flat-square)](https://nodejs.org/api/esm.html)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](./LICENSE)
+> **Unified quality audit framework for KB Labs monorepo packages.** Combines existing quality checks (eslint, tsc, vitest, build, devlink, mind, security) into a single orchestrator, producing machine-readable JSON reports and human-readable summaries (Markdown, Text, HTML) for CI/CD and release-manager integration.
 
-Unified quality audit framework for KB Labs monorepo packages. Combines existing quality checks (eslint, tsc, vitest, build, devlink, mind, security) into a single orchestrator, producing machine-readable JSON reports and human-readable summaries (Markdown, Text, HTML) for CI/CD and release-manager integration.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Node.js](https://img.shields.io/badge/Node.js-18.18.0+-green.svg)](https://nodejs.org/)
+[![pnpm](https://img.shields.io/badge/pnpm-9.0.0+-orange.svg)](https://pnpm.io/)
 
-## Features
+## 🎯 Vision
 
-- **Unified Quality Checks** ![Checks](https://img.shields.io/badge/Checks-7%20Types-4CAF50.svg?style=flat-square): Run all quality checks (style, types, tests, build, devlink, mind, security) with a single command
-- **Machine-Readable Reports** ![JSON](https://img.shields.io/badge/JSON-Stable-FF9800.svg?style=flat-square): JSON output for CI/CD pipelines and release-manager integration
-- **Human-Readable Reports** ![Reports](https://img.shields.io/badge/Reports-MD%2FTXT%2FHTML-2196F3.svg?style=flat-square): Markdown, Text, and HTML summaries
-- **Parallel Execution** ![Parallel](https://img.shields.io/badge/Parallel-Configurable-9C27B0.svg?style=flat-square): Efficient parallel check execution with configurable concurrency (default: 4)
-- **Configurable Thresholds** ![Thresholds](https://img.shields.io/badge/Thresholds-Flexible-00BCD4.svg?style=flat-square): Coverage thresholds from devkit profiles or local config
-- **Graceful Degradation** ![Degradation](https://img.shields.io/badge/Degradation-Graceful-8BC34A.svg?style=flat-square): Missing tools are skipped gracefully
-- **Exit Codes** ![Exit](https://img.shields.io/badge/Exit-Codes-607D8B.svg?style=flat-square): Proper exit codes (0=pass, 2=quality gate fail, 3=misconfig)
-- **Package Scope Filtering** ![Scope](https://img.shields.io/badge/Scope-Glob-FF5722.svg?style=flat-square): Run checks per package with glob patterns and aggregate results
+KB Labs Audit provides a unified quality audit framework for KB Labs monorepo packages. It combines existing quality checks (eslint, tsc, vitest, build, devlink, mind, security) into a single orchestrator, producing machine-readable JSON reports and human-readable summaries for CI/CD and release-manager integration.
 
-## Why Audit?
+The project solves the problem of inconsistent quality checks across packages in a monorepo by providing a single command that runs all quality checks, aggregates results, and produces standardized reports. Instead of running multiple commands manually, developers can use `kb audit run` to get a comprehensive quality report.
 
-Working with multiple packages in a monorepo requires consistent quality checks:
+This project is part of the **@kb-labs** ecosystem and integrates seamlessly with CI/CD pipelines, release manager, and all KB Labs development workflows.
 
-- **Manual checks** are time-consuming and error-prone
-- **Inconsistent thresholds** across packages cause quality gaps
-- **CI/CD integration** needs machine-readable reports
-- **Release workflows** require aggregated quality status
+## 🚀 Quick Start
 
-Audit solves these problems by providing:
-
-✅ **Single command** — run all checks with `kb audit run`  
-✅ **Deterministic reports** — consistent JSON schema for automation  
-✅ **Flexible configuration** — devkit profiles + local overrides  
-✅ **Graceful degradation** — missing tools don't break the audit  
-✅ **Package filtering** — audit specific packages with `--scope`
-
-## Install
+### Installation
 
 ```bash
 pnpm add -D @kb-labs/audit
@@ -44,9 +24,25 @@ pnpm add -D @kb-labs/audit
 npm i -D @kb-labs/audit
 ```
 
-## Quick Start
+### Development
 
-### 1. Run audit checks
+```bash
+# Install dependencies
+pnpm install
+
+# Build all packages
+pnpm build
+
+# Run tests
+pnpm test
+
+# Lint code
+pnpm lint
+```
+
+### Basic Usage
+
+#### Run Audit Checks
 
 ```bash
 # Run all enabled checks at repo level
@@ -62,7 +58,7 @@ kb audit run --json
 kb audit run --profile frontend
 ```
 
-### 2. View results
+#### View Results
 
 ```bash
 # Show last report (human-readable)
@@ -75,7 +71,7 @@ kb audit show --json
 kb audit list-checks
 ```
 
-### 3. Configure (optional)
+#### Configuration
 
 Create `kb-labs.config.json` to customize behavior:
 
@@ -96,72 +92,104 @@ Create `kb-labs.config.json` to customize behavior:
 }
 ```
 
-## Commands
+## ✨ Features
 
-### `kb audit run`
+- **Unified Quality Checks**: Run all quality checks (style, types, tests, build, devlink, mind, security) with a single command
+- **Machine-Readable Reports**: JSON output for CI/CD pipelines and release-manager integration
+- **Human-Readable Reports**: Markdown, Text, and HTML summaries
+- **Parallel Execution**: Efficient parallel check execution with configurable concurrency (default: 4)
+- **Configurable Thresholds**: Coverage thresholds from devkit profiles or local config
+- **Graceful Degradation**: Missing tools are skipped gracefully
+- **Proper Exit Codes**: Exit codes (0=pass, 2=quality gate fail, 3=misconfig)
+- **Package Scope Filtering**: Run checks per package with glob patterns and aggregate results
 
-Run quality audit checks across the workspace.
+## 📁 Repository Structure
 
-**Flags:**
-- `--scope <pattern>`: Package scope (glob pattern). When specified, runs checks per package and aggregates results. If not specified, runs at repo level.
-- `--all`: Include private packages in scope filtering
-- `--strict`: Fail on any threshold breach
-- `--profile <name>`: Devkit profile to use (e.g., `frontend`, `library`)
-- `--fail-on <level>`: Exit policy (`warn`, `error`, or `any`). Default: `error`
-- `--json`: Print JSON to stdout
-- `--md`: Generate markdown summary (default: true)
-- `--html`: Generate HTML summary
-- `--text`: Generate text summary (default: true)
-- `--quiet`: Reduce output verbosity
-
-**Examples:**
-```bash
-# Run all checks at repo level
-kb audit run
-
-# Run checks for specific packages (per-package execution)
-kb audit run --scope packages/*
-
-# Run with glob pattern
-kb audit run --scope "packages/{core,cli}/*"
-
-# Include private packages
-kb audit run --scope packages/* --all
-
-# Run in strict mode with JSON output
-kb audit run --strict --json
-
-# Use specific profile
-kb audit run --profile frontend --md
+```
+kb-labs-audit/
+├── apps/                    # Example applications
+├── packages/                # Core packages
+│   ├── audit-core/          # Core orchestrator, configuration, aggregation, and report generation
+│   ├── audit-checks/        # Check adapters for eslint, tsc, vitest, build, devlink, mind, security
+│   └── audit-cli/           # CLI commands and manifest integration
+├── docs/                    # Documentation
+│   └── adr/                 # Architecture Decision Records
+└── scripts/                 # Utility scripts
 ```
 
-### `kb audit list-checks`
+### Directory Descriptions
 
-List all available audit checks.
+- **`apps/`** - Example applications demonstrating audit usage
+- **`packages/audit-core/`** - Core orchestrator with configuration, aggregation, and report generation
+- **`packages/audit-checks/`** - Check adapters that normalize tool output
+- **`packages/audit-cli/`** - CLI commands and manifest integration
+- **`docs/`** - Documentation including ADRs and guides
 
-```bash
-kb audit list-checks
-kb audit list-checks --json
-```
+## 📦 Packages
 
-### `kb audit show`
+| Package | Description |
+|---------|-------------|
+| [@kb-labs/audit-core](./packages/audit-core/) | Core orchestrator, configuration, aggregation, and report generation |
+| [@kb-labs/audit-checks](./packages/audit-checks/) | Check adapters for eslint, tsc, vitest, build, devlink, mind, security |
+| [@kb-labs/audit-cli](./packages/audit-cli/) | CLI commands and manifest integration |
 
-Display the last audit report.
+### Package Details
 
-```bash
-kb audit show
-kb audit show --json
-```
+**@kb-labs/audit-core** provides the core orchestrator:
+- Configuration loading and merging (config → profile → defaults)
+- Package scope discovery and filtering
+- Check execution with parallel processing
+- Result aggregation and threshold validation
+- Report generation (JSON, Markdown, Text, HTML)
 
-### `kb audit clean`
+**@kb-labs/audit-checks** provides check adapters:
+- **Style Check (ESLint)**: Runs `eslint .`, captures errors and warnings
+- **Types Check (TypeScript)**: Runs `tsc --noEmit`, captures type errors
+- **Tests Check (Vitest)**: Runs `vitest run`, validates coverage thresholds
+- **Build Check**: Auto-detects build tool (tsup/rollup/vite), measures success
+- **DevLink Check**: Runs `kb devlink status --json`, validates linking state
+- **Mind Check**: Runs `kb mind pack --json`, validates context layer
+- **Security Check**: Runs `npm audit --json`, captures vulnerabilities
 
-Clean the `.kb/audit/` output directory.
+**@kb-labs/audit-cli** provides CLI commands:
+- `kb audit run` - Run quality audit checks
+- `kb audit show` - Display last audit report
+- `kb audit list-checks` - List available checks
+- `kb audit clean` - Clean output directory
 
-```bash
-kb audit clean
-```
+## 🛠️ Available Scripts
 
-## Configuration
+| Script | Description |
+|--------|-------------|
+| `pnpm dev` | Start development mode for all packages |
+| `pnpm build` | Build all packages |
+| `pnpm build:clean` | Clean and build all packages |
+| `pnpm test` | Run all tests |
+| `pnpm test:coverage` | Run tests with coverage reporting |
+| `pnpm test:watch` | Run tests in watch mode |
+| `pnpm lint` | Lint all code |
+| `pnpm lint:fix` | Fix linting issues |
+| `pnpm format` | Format code with Prettier |
+| `pnpm type-check` | TypeScript type checking |
+| `pnpm check` | Run lint, type-check, and tests |
+| `pnpm ci` | Full CI pipeline (clean, build, check) |
+| `pnpm clean` | Clean build artifacts |
+| `pnpm clean:all` | Clean all node_modules and build artifacts |
+
+## 📋 Development Policies
+
+- **Code Style**: ESLint + Prettier, TypeScript strict mode
+- **Testing**: Vitest with comprehensive test coverage
+- **Versioning**: SemVer with automated releases through Changesets
+- **Architecture**: Document decisions in ADRs (see `docs/adr/`)
+- **Design Principles**: Deterministic, composable, isolated, observable, safe, fast
+
+## 🔧 Requirements
+
+- **Node.js**: >= 18.18.0
+- **pnpm**: >= 9.0.0
+
+## ⚙️ Configuration
 
 Configure audit behavior via `kb-labs.config.json`:
 
@@ -201,7 +229,8 @@ Configure audit behavior via `kb-labs.config.json`:
 }
 ```
 
-**Configuration Priority:**
+### Configuration Priority
+
 1. `kb-labs.config.json#audit` (highest priority)
 2. Devkit profile thresholds
 3. Default values
@@ -226,7 +255,61 @@ Build check measures:
 - Artifact size (if available)
 - Errors are logged but don't halt audit (unless `--strict`)
 
-## Output
+## 🏗️ Architecture
+
+### Architecture Flow
+
+```
+┌──────────────────────┐
+│   config phase      │
+│  load config        │
+│  resolve profile    │
+│  merge overrides    │
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│   scope phase        │
+│  discover packages   │
+│  apply glob filters  │
+│  filter private      │
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│   check phase       │
+│  run adapters       │
+│  parallel execution  │
+│  timeout handling   │
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│  aggregate phase    │
+│  merge results      │
+│  apply thresholds   │
+│  compute overall    │
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│   report phase      │
+│  generate JSON      │
+│  generate MD/TXT   │
+│  generate HTML      │
+└──────────────────────┘
+```
+
+### Design Principles
+
+- **Deterministic**: Reproducible reports across runs
+- **Composable**: CLI is a thin wrapper; all logic in packages
+- **Isolated**: Each check runs independently
+- **Observable**: Everything produces explicit reports
+- **Safe**: Graceful degradation for missing tools
+- **Fast**: Parallel execution with configurable concurrency
+
+## 📊 Output
 
 Audit reports are written to `.kb/audit/`:
 
@@ -280,114 +363,16 @@ JSON reports follow a stable schema:
 }
 ```
 
-## Exit Codes
+### Exit Codes
 
-- `0` — All checks passed
-- `1` — Infrastructure/tool error (unexpected failure)
-- `2` — Quality gate failed (expected fail)
-- `3` — Misconfiguration (invalid config or flags)
+| Code | Description |
+|------|-------------|
+| 0 | All checks passed |
+| 1 | Infrastructure/tool error (unexpected failure) |
+| 2 | Quality gate failed (expected fail) |
+| 3 | Misconfiguration (invalid config or flags) |
 
-## Architecture
-
-The audit system consists of three packages:
-
-- **@kb-labs/audit-core**: Core orchestrator, configuration, aggregation, and report generation
-- **@kb-labs/audit-checks**: Adapters for specific tools (eslint, tsc, vitest, build, devlink, mind, security)
-- **@kb-labs/audit-cli**: CLI commands and manifest integration
-
-### Architecture Flow
-
-```
-┌──────────────────────┐
-│   config phase      │
-│  load config        │
-│  resolve profile    │
-│  merge overrides    │
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────┐
-│   scope phase        │
-│  discover packages   │
-│  apply glob filters  │
-│  filter private      │
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────┐
-│   check phase       │
-│  run adapters       │
-│  parallel execution  │
-│  timeout handling   │
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────┐
-│  aggregate phase    │
-│  merge results      │
-│  apply thresholds   │
-│  compute overall    │
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────┐
-│   report phase      │
-│  generate JSON      │
-│  generate MD/TXT   │
-│  generate HTML      │
-└──────────────────────┘
-```
-
-## Packages
-
-This monorepo includes:
-
-| Package                                    | Description                                               |
-| ------------------------------------------ | --------------------------------------------------------- |
-| [`@kb-labs/audit-core`](./packages/audit-core) | Core orchestrator, configuration, aggregation, and report generation |
-| [`@kb-labs/audit-checks`](./packages/audit-checks) | Check adapters for eslint, tsc, vitest, build, devlink, mind, security |
-| [`@kb-labs/audit-cli`](./packages/audit-cli) | CLI commands and manifest integration |
-
-## Check Adapters
-
-Each check is implemented as an adapter that normalizes tool output:
-
-### Style Check (ESLint)
-- Runs `eslint .`
-- Captures errors and warnings
-- Normalizes to audit format
-
-### Types Check (TypeScript)
-- Runs `tsc --noEmit`
-- Captures type errors
-- Reports error count
-
-### Tests Check (Vitest)
-- Runs `vitest run`
-- Captures test results
-- Validates coverage thresholds
-
-### Build Check
-- Auto-detects build tool (tsup/rollup/vite)
-- Runs corresponding build command
-- Measures success and artifact size
-
-### DevLink Check
-- Runs `kb devlink status --json`
-- Validates linking state
-- Reports drift if any
-
-### Mind Check
-- Runs `kb mind pack --json`
-- Validates context layer
-- Reports pack status
-
-### Security Check (npm audit)
-- Runs `npm audit --json`
-- Captures vulnerabilities
-- Reports severity levels
-
-## Use Cases
+## 💡 Use Cases
 
 - **CI/CD Integration**: Run audits in CI pipelines with JSON output
 - **Release Workflow**: Validate quality before releases
@@ -396,105 +381,32 @@ Each check is implemented as an adapter that normalizes tool output:
 - **Team Standards**: Enforce consistent thresholds across packages
 - **Development Workflow**: Quick quality check during development
 
-## Design Principles
+## 📚 Documentation
 
-- **Deterministic**: Reproducible reports across runs
-- **Composable**: CLI is a thin wrapper; all logic in packages
-- **Isolated**: Each check runs independently
-- **Observable**: Everything produces explicit reports
-- **Safe**: Graceful degradation for missing tools
-- **Fast**: Parallel execution with configurable concurrency
+- [Documentation Standard](./docs/DOCUMENTATION.md) - Full documentation guidelines
+- [Contributing Guide](./CONTRIBUTING.md) - How to contribute
+- [Architecture Decisions](./docs/adr/) - ADRs for this project
 
-## DevKit Integration
+**Package READMEs:** See individual package directories for detailed API documentation
 
-This project uses `@kb-labs/devkit` for shared tooling configurations:
+## 🔗 Related Packages
 
-- **TypeScript**: `@kb-labs/devkit/tsconfig/node.json`
-- **ESLint**: `@kb-labs/devkit/eslint/node.js`
-- **Prettier**: `@kb-labs/devkit/prettier/index.json`
-- **Vitest**: `@kb-labs/devkit/vitest/node.js`
-- **Tsup**: `@kb-labs/devkit/tsup/node.js`
+### Dependencies
 
-To sync DevKit assets:
+- [@kb-labs/core](https://github.com/KirillBaranov/kb-labs-core) - Core utilities
+- [@kb-labs/devkit](https://github.com/KirillBaranov/kb-labs-devkit) - DevKit profiles
 
-```bash
-pnpm devkit:sync
-```
+### Used By
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for more details on DevKit integration.
+- All KB Labs projects for quality checking
+- CI/CD pipelines
+- [@kb-labs/release-manager](https://github.com/KirillBaranov/kb-labs-release-manager) - Release orchestration
 
-## Examples
+### Ecosystem
 
-### Example 1: Basic workflow
+- [KB Labs](https://github.com/KirillBaranov/kb-labs) - Main ecosystem repository
 
-```bash
-# Run all checks
-kb audit run
-
-# View results
-kb audit show
-```
-
-### Example 2: Package scope filtering
-
-```bash
-# Audit specific packages
-kb audit run --scope packages/core/*
-
-# Audit multiple patterns
-kb audit run --scope "packages/{core,cli}/*"
-
-# Include private packages
-kb audit run --scope packages/* --all
-```
-
-### Example 3: CI/CD Integration
-
-```bash
-# Run with JSON output
-kb audit run --json > audit-report.json
-
-# Check exit code
-if [ $? -eq 0 ]; then
-  echo "All checks passed"
-else
-  echo "Quality gate failed"
-  exit 1
-fi
-```
-
-### Example 4: Profile-based configuration
-
-```bash
-# Use frontend profile (higher coverage thresholds)
-kb audit run --profile frontend
-
-# Use library profile (standard thresholds)
-kb audit run --profile library
-```
-
-### Example 5: Custom configuration
-
-```json
-{
-  "audit": {
-    "enable": ["style", "types", "tests"],
-    "thresholds": {
-      "coverage": {
-        "lines": 95,
-        "branches": 90,
-        "functions": 95,
-        "statements": 95
-      }
-    },
-    "timeouts": {
-      "testsMs": 600000
-    }
-  }
-}
-```
-
-## FAQ
+## ❓ FAQ
 
 ### General
 
@@ -521,23 +433,17 @@ kb audit run --profile library
 
 - **Where are reports saved?** — `.kb/audit/` directory in repo root.
 - **Can I customize report formats?** — Yes, via `kb-labs.config.json#audit.output`.
-- **What's the JSON schema?** — See [Output](#output) section above.
+- **What's the JSON schema?** — See [Output](#-output) section above.
 - **Can I use reports in CI/CD?** — Yes, JSON reports are stable and machine-readable.
 
-## Documentation
+## 🤝 Contributing
 
-- **[Contributing Guide](./CONTRIBUTING.md)** — Guidelines for contributors
-- **Package READMEs**: See individual package directories for detailed API documentation
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for development guidelines and contribution process.
 
-## Contributing
+## 📄 License
 
-We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+MIT © KB Labs
 
-## License
+---
 
-MIT © 2025 KB Labs — Built for automated developer ecosystems.
-
-## Author
-
-**Kirill Baranov**
-- GitHub: [@kirill-baranov](https://github.com/kirill-baranov)
+**See [CONTRIBUTING.md](./CONTRIBUTING.md) for development guidelines and contribution process.**
