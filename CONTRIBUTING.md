@@ -91,8 +91,9 @@ kb-labs-audit/
 │   └── adr/                     # Architecture Decision Records (if any)
 ├── .github/
 │   └── workflows/               # CI/CD workflows
-├── kb-labs/
-│   └── agents/                  # AI agent definitions
+└── .kb/
+    └── devkit/
+        └── agents/              # AI agent definitions (synced from DevKit)
 ├── README.md
 ├── CONTRIBUTING.md
 ├── package.json
@@ -330,7 +331,7 @@ pnpm devkit:help    # Show help and available options
 
 The following assets are synced from DevKit:
 
-- **AI Agents** → `kb-labs/agents/` — Standardized AI agent definitions
+- **AI Agents** → `.kb/devkit/agents/` — Standardized AI agent definitions (synced from DevKit)
 - **Cursor Rules** → `.cursorrules` — Cursor IDE configuration
 - **VS Code Settings** → `.vscode/settings.json` — Editor configuration (optional)
 
@@ -342,7 +343,7 @@ pnpm devkit:sync
 
 ## AI Agents
 
-This project includes standardized AI agents for common development tasks. Each agent is defined in the `kb-labs/agents/` directory:
+This project includes standardized AI agents synced from DevKit. Each agent is defined in the `.kb/devkit/agents/` directory:
 
 - **DevKit Maintainer** — Enforces unified tooling and DevKit standards
 - **Test Generator** — Generates and maintains unit tests
@@ -352,10 +353,10 @@ This project includes standardized AI agents for common development tasks. Each 
 When contributing to Audit:
 
 - Use agents to accelerate development
-- Update agent prompts if workflows change
-- Re-sync agents before major contributions: `pnpm devkit:sync`
+- Agents are synced from DevKit via `pnpm devkit:sync`
+- Product-specific agents can be added to `.kb/<product>/agents/` if needed
 
-See [`kb-labs/agents/`](./kb-labs/agents/) for detailed agent documentation.
+> **Note:** `.kb` is the common ecosystem folder. `devkit` is the product namespace. Each product decides what to store in their namespace.
 
 ## Architecture Decision Records (ADR)
 
@@ -367,6 +368,15 @@ For significant architectural decisions, create an ADR:
 4. Include in your PR
 
 ADRs help document the "why" behind design choices and provide context for future contributors.
+
+### Architecture Decision Requirements
+
+- For significant architectural changes, add an ADR in `docs/adr/`
+- Follow the ADR template in `docs/adr/0000-template.md`
+- Include required metadata (Date, Status, Deciders, **Last Reviewed**, **Tags**)
+- **Last Reviewed** date is required and should be updated periodically
+- **Tags** are mandatory (minimum 1, maximum 5 tags from approved list)
+- See [Documentation Standard](./docs/DOCUMENTATION.md) for ADR format requirements
 
 ## Branching model
 
@@ -518,4 +528,4 @@ Open a GitHub Discussion or issue. PRs welcome!
 
 ---
 
-Thank you for contributing to @kb-labs/audit! 🚀
+**See [Documentation Standard](./docs/DOCUMENTATION.md) for complete documentation guidelines.**

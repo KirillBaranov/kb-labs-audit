@@ -5,7 +5,7 @@
 
 import { rm } from 'node:fs/promises';
 import { join } from 'node:path';
-import type { Command } from '@kb-labs/cli-commands/types';
+import type { Command } from '@kb-labs/cli-commands';
 import { box, safeColors, safeSymbols } from '@kb-labs/shared-cli-ui';
 import { findRepoRoot } from '../utils.js';
 import { runScope, type AnalyticsEventV1, type EmitResult } from '@kb-labs/analytics-sdk-node';

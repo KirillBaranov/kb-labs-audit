@@ -1,0 +1,143 @@
+{
+  "version": "v20.19.4",
+  "cliVersion": "0.1.0",
+  "timestamp": 1761916794049,
+  "lockfileHash": "4ee85ce99d30ffbfc7a4b806992f4269a689de71b1be5d2e7c110ac76c023229",
+  "configHash": "05c5557936fe4fa7c83efa0cead88e1266c15b553e8ba826996f8ca6e0eec0f9",
+  "packages": {
+    "@kb-labs/audit-cli": {
+      "version": "0.1.0",
+      "manifestHash": "4b768312543b749b22695c92b0bd4c710990630a3dcbe92b879abb833e44bdeb",
+      "manifestPath": "/Users/kirillbaranov/Desktop/kb-labs/kb-labs-audit/packages/audit-cli/dist/cli.manifest.js",
+      "pkgJsonMtime": 1761915999272.5266,
+      "manifestMtime": 1761916787932.4001,
+      "result": {
+        "manifests": [
+          {
+            "manifestVersion": "1.0",
+            "id": "audit:run",
+            "group": "audit",
+            "describe": "Run quality audit checks",
+            "longDescription": "Run all enabled quality checks (style, types, tests, build, devlink, mind) and generate reports",
+            "flags": [
+              {
+                "name": "scope",
+                "type": "string",
+                "description": "Package scope (glob pattern). If not specified, runs across all workspace packages."
+              },
+              {
+                "name": "all",
+                "type": "boolean",
+                "description": "Include private packages in scope filtering"
+              },
+              {
+                "name": "strict",
+                "type": "boolean",
+                "description": "Fail on any threshold breach"
+              },
+              {
+                "name": "profile",
+                "type": "string",
+                "description": "Devkit profile to use"
+              },
+              {
+                "name": "fail-on",
+                "type": "string",
+                "default": "error",
+                "description": "Exit policy: warn, error, or any",
+                "choices": [
+                  "warn",
+                  "error",
+                  "any"
+                ]
+              },
+              {
+                "name": "json",
+                "type": "boolean",
+                "description": "Print JSON to stdout"
+              },
+              {
+                "name": "md",
+                "type": "boolean",
+                "description": "Generate markdown summary"
+              },
+              {
+                "name": "html",
+                "type": "boolean",
+                "description": "Generate HTML summary"
+              },
+              {
+                "name": "dry-run",
+                "type": "boolean",
+                "alias": "n",
+                "description": "Show what would be checked without running checks"
+              }
+            ],
+            "examples": [
+              "kb audit run",
+              "kb audit run --scope packages/*",
+              "kb audit run --strict --json",
+              "kb audit run --profile frontend --md",
+              "kb audit run --dry-run"
+            ],
+            "namespace": "audit",
+            "package": "@kb-labs/audit-cli"
+          },
+          {
+            "manifestVersion": "1.0",
+            "id": "audit:list-checks",
+            "group": "audit",
+            "describe": "List available audit checks",
+            "flags": [
+              {
+                "name": "json",
+                "type": "boolean",
+                "description": "Output in JSON format"
+              }
+            ],
+            "examples": [
+              "kb audit list-checks",
+              "kb audit list-checks --json"
+            ],
+            "namespace": "audit",
+            "package": "@kb-labs/audit-cli"
+          },
+          {
+            "manifestVersion": "1.0",
+            "id": "audit:show",
+            "group": "audit",
+            "describe": "Show last audit report",
+            "flags": [
+              {
+                "name": "json",
+                "type": "boolean",
+                "description": "Output in JSON format"
+              }
+            ],
+            "examples": [
+              "kb audit show",
+              "kb audit show --json"
+            ],
+            "namespace": "audit",
+            "package": "@kb-labs/audit-cli"
+          },
+          {
+            "manifestVersion": "1.0",
+            "id": "audit:clean",
+            "group": "audit",
+            "describe": "Clean audit output directory",
+            "examples": [
+              "kb audit clean"
+            ],
+            "namespace": "audit",
+            "package": "@kb-labs/audit-cli"
+          }
+        ],
+        "source": "workspace",
+        "packageName": "@kb-labs/audit-cli",
+        "manifestPath": "/Users/kirillbaranov/Desktop/kb-labs/kb-labs-audit/packages/audit-cli/dist/cli.manifest.js",
+        "pkgRoot": "/Users/kirillbaranov/Desktop/kb-labs/kb-labs-audit/packages/audit-cli"
+      }
+    }
+  }
+}

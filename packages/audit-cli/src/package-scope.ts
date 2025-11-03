@@ -15,6 +15,7 @@ export interface PackageInfo {
 
 /**
  * Get workspace packages from pnpm-workspace.yaml
+ * Also checks root-level projects (kb-labs-*) if they have package.json
  */
 export async function getWorkspacePackages(
   repoRoot: string
@@ -33,6 +34,7 @@ export async function getWorkspacePackages(
 
   const packageInfos: PackageInfo[] = [];
 
+  // Collect packages from workspace patterns
   for (const pattern of packages) {
     try {
       const packageDirs = await globby(pattern, {
@@ -52,7 +54,8 @@ export async function getWorkspacePackages(
             private?: boolean;
           };
 
-          if (packageJson.name) {
+          // Only include packages that are not in node_modules
+          if (packageJson.name && !packagePath.includes('/node_modules/') && !packagePath.includes('\\node_modules\\')) {
             packageInfos.push({
               name: packageJson.name,
               path: packagePath,
@@ -66,6 +69,45 @@ export async function getWorkspacePackages(
     } catch {
       // Skip invalid patterns
     }
+  }
+
+  // Also check root-level kb-labs-* projects
+  try {
+    const { readdir } = await import('node:fs/promises');
+    const rootDirs = await readdir(repoRoot, { withFileTypes: true });
+    
+    for (const dirent of rootDirs) {
+      if (dirent.isDirectory() && dirent.name.startsWith('kb-labs-')) {
+        const projectPath = join(repoRoot, dirent.name);
+        const packageJsonPath = join(projectPath, 'package.json');
+        
+        try {
+          const packageJsonContent = await readFile(packageJsonPath, 'utf-8');
+          const packageJson = JSON.parse(packageJsonContent) as {
+            name?: string;
+            private?: boolean;
+          };
+
+          // Only add if it has a name, isn't in node_modules, and isn't already in the list
+          if (
+            packageJson.name &&
+            !projectPath.includes('/node_modules/') &&
+            !projectPath.includes('\\node_modules\\') &&
+            !packageInfos.some(p => p.path === projectPath)
+          ) {
+            packageInfos.push({
+              name: packageJson.name,
+              path: projectPath,
+              private: packageJson.private,
+            });
+          }
+        } catch {
+          // Skip projects without valid package.json
+        }
+      }
+    }
+  } catch {
+    // If we can't read root directory, continue without root-level projects
   }
 
   return packageInfos;

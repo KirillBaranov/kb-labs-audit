@@ -106,6 +106,9 @@ importers:
 
   packages/audit-cli:
     dependencies:
+      '@kb-labs/analytics-sdk-node':
+        specifier: link:../../../kb-labs-analytics/packages/analytics-sdk-node
+        version: link:../../../kb-labs-analytics/packages/analytics-sdk-node
       '@kb-labs/audit-checks':
         specifier: link:../audit-checks
         version: link:../audit-checks
@@ -124,6 +127,9 @@ importers:
       '@kb-labs/shared-cli-ui':
         specifier: link:../../../kb-labs-shared/packages/cli-ui
         version: link:../../../kb-labs-shared/packages/cli-ui
+      execa:
+        specifier: ^8.0.0
+        version: 8.0.1
       globby:
         specifier: ^11.0.0
         version: 11.1.0

@@ -5,7 +5,7 @@
 
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import type { Command } from '@kb-labs/cli-commands/types';
+import type { Command } from '@kb-labs/cli-commands';
 import { findRepoRoot } from '../utils.js';
 import type { AuditReport } from '@kb-labs/audit-core';
 import { runScope, type AnalyticsEventV1, type EmitResult } from '@kb-labs/analytics-sdk-node';

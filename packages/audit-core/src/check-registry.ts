@@ -18,14 +18,13 @@ export async function createCheckRegistry(): Promise<Map<CheckId, CheckAdapter>>
   
   try {
     // Strategy 1: Direct import (works in same workspace)
-    // @ts-ignore - dynamic import, type checking happens at runtime
+    // @ts-expect-error - dynamic import, type checking happens at runtime
     adaptersModule = await import('@kb-labs/audit-checks');
   } catch {
     try {
       // Strategy 2: Try relative path from audit-core location
       const { createRequire } = await import('node:module');
       const require = createRequire(import.meta.url);
-      // @ts-ignore - dynamic require
       adaptersModule = require('@kb-labs/audit-checks');
     } catch {
       try {
@@ -55,13 +54,13 @@ export async function createCheckRegistry(): Promise<Map<CheckId, CheckAdapter>>
       SecurityCheck,
     } = adaptersModule;
 
-    if (StyleCheck) registry.set('style', new StyleCheck());
-    if (TypesCheck) registry.set('types', new TypesCheck());
-    if (TestsCheck) registry.set('tests', new TestsCheck());
-    if (BuildCheck) registry.set('build', new BuildCheck());
-    if (DevLinkCheck) registry.set('devlink', new DevLinkCheck());
-    if (MindCheck) registry.set('mind', new MindCheck());
-    if (SecurityCheck) registry.set('security', new SecurityCheck());
+    if (StyleCheck) {registry.set('style', new StyleCheck());}
+    if (TypesCheck) {registry.set('types', new TypesCheck());}
+    if (TestsCheck) {registry.set('tests', new TestsCheck());}
+    if (BuildCheck) {registry.set('build', new BuildCheck());}
+    if (DevLinkCheck) {registry.set('devlink', new DevLinkCheck());}
+    if (MindCheck) {registry.set('mind', new MindCheck());}
+    if (SecurityCheck) {registry.set('security', new SecurityCheck());}
   } catch (err) {
     console.warn('[Audit] Failed to instantiate check adapters:', err instanceof Error ? err.message : String(err));
   }

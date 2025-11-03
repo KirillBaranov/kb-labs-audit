@@ -3,12 +3,15 @@
  * Ultra-compact, CI-friendly format
  */
 
-import type { AuditReport } from '../types';
+import type { AuditReport, CheckId, AuditCheckResult } from '../types';
 
 /**
  * Render audit results as plain text
  */
-export function renderText(report: AuditReport): string {
+export function renderText(
+  report: AuditReport,
+  options?: { verbose?: boolean; packageResults?: Array<{ package: { name: string; path: string }; checks: Partial<Record<CheckId, AuditCheckResult>>; overall: { ok: boolean; failReasons: string[] } }> }
+): string {
   const lines: string[] = [];
 
   lines.push('AUDIT REPORT');
@@ -53,6 +56,67 @@ export function renderText(report: AuditReport): string {
 
     const detailsStr = details.length > 0 ? ` (${details.join(', ')})` : '';
     lines.push(`[${id}] ${status}${detailsStr}`);
+  }
+
+  // Detailed package breakdown in verbose mode
+  if (options?.verbose && options?.packageResults && options.packageResults.length > 0) {
+    const failedPackages = options.packageResults.filter(p => !p.overall.ok);
+    if (failedPackages.length > 0) {
+      lines.push('');
+      lines.push('DETAILED PACKAGE ERRORS:');
+      lines.push('');
+      
+      for (const pkgResult of failedPackages) {
+        lines.push(`${pkgResult.package.name}`);
+        lines.push(`  Path: ${pkgResult.package.path}`);
+        
+        const failedChecks = Object.entries(pkgResult.checks).filter(
+          ([, check]) => check && !check.ok
+        );
+        
+        for (const [checkId, check] of failedChecks) {
+          lines.push(`  [${checkId}] FAIL`);
+          if (check.code) {
+            lines.push(`    Code: ${check.code}`);
+          }
+          if (check.hint) {
+            lines.push(`    Hint: ${check.hint}`);
+          }
+          
+          const details = check.details as any;
+          if (details) {
+            if (details.errors !== undefined) {
+              lines.push(`    Errors: ${details.errors}`);
+            }
+            if (details.warnings !== undefined) {
+              lines.push(`    Warnings: ${details.warnings}`);
+            }
+            if (details.failed !== undefined) {
+              lines.push(`    Failed: ${details.failed}/${details.total || '?'}`);
+            }
+            if (details.coverage && details.threshold) {
+              const cov = details.coverage;
+              const thresh = details.threshold;
+              const issues: string[] = [];
+              if (cov.lines < thresh.lines) {issues.push(`lines: ${cov.lines}% < ${thresh.lines}%`);}
+              if (cov.branches < thresh.branches) {issues.push(`branches: ${cov.branches}% < ${thresh.branches}%`);}
+              if (cov.functions < thresh.functions) {issues.push(`functions: ${cov.functions}% < ${thresh.functions}%`);}
+              if (cov.statements < thresh.statements) {issues.push(`statements: ${cov.statements}% < ${thresh.statements}%`);}
+              if (issues.length > 0) {
+                lines.push(`    Coverage: ${issues.join(', ')}`);
+              }
+            }
+            if (details.exitCode !== undefined && details.exitCode !== 0) {
+              lines.push(`    Exit: ${details.exitCode}`);
+            }
+            if (details.error) {
+              lines.push(`    Error: ${String(details.error).substring(0, 150)}${String(details.error).length > 150 ? '...' : ''}`);
+            }
+          }
+        }
+        lines.push('');
+      }
+    }
   }
 
   lines.push('');

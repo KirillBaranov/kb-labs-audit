@@ -2,7 +2,7 @@
  * Audit list-checks command
  */
 
-import type { Command } from '@kb-labs/cli-commands/types';
+import type { Command } from '@kb-labs/cli-commands';
 import { box, keyValue, safeColors } from '@kb-labs/shared-cli-ui';
 import { createCheckRegistry } from '@kb-labs/audit-core';
 import { runScope, type AnalyticsEventV1, type EmitResult } from '@kb-labs/analytics-sdk-node';
@@ -40,7 +40,7 @@ export const listChecks: Command = {
             payload: {},
           });
 
-          const registry = createCheckRegistry();
+          const registry = await createCheckRegistry();
           const checks: Array<{ id: string; description: string; available: boolean }> = [];
 
           for (const [id, adapter] of registry.entries()) {

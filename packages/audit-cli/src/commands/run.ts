@@ -4,7 +4,7 @@
 
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import type { Command } from '@kb-labs/cli-commands/types';
+import type { Command } from '@kb-labs/cli-commands';
 import { box, keyValue, formatTiming, TimingTracker, safeSymbols, safeColors, Loader } from '@kb-labs/shared-cli-ui';
 import {
   loadConfig,

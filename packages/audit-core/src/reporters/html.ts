@@ -3,12 +3,15 @@
  * Lightweight HTML dashboard
  */
 
-import type { AuditReport, CheckId } from '../types.js';
+import type { AuditReport, CheckId, AuditCheckResult } from '../types.js';
 
 /**
  * Render audit results as HTML
  */
-export function renderHtml(report: AuditReport): string {
+export function renderHtml(
+  report: AuditReport,
+  options?: { verbose?: boolean; packageResults?: Array<{ package: { name: string; path: string }; checks: Partial<Record<CheckId, AuditCheckResult>>; overall: { ok: boolean; failReasons: string[] } }> }
+): string {
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -93,6 +96,11 @@ export function renderHtml(report: AuditReport): string {
   <h2>Checks</h2>
   ${renderChecksHtml(report.checks)}
 
+  ${options?.verbose && options?.packageResults && options.packageResults.length > 0 && options.packageResults.some(p => !p.overall.ok) ? `
+  <h2>Detailed Package Errors</h2>
+  ${renderDetailedPackagesHtml(options.packageResults.filter(p => !p.overall.ok))}
+  ` : ''}
+
   <div class="meta">
     <p><strong>Total time:</strong> ${formatTiming(report.meta.timingMs.total)}</p>
     <p><strong>Node:</strong> ${escapeHtml(report.meta.node)}</p>
@@ -111,7 +119,7 @@ function renderChecksHtml(checks: AuditReport['checks']): string {
 
   return sortedChecks
     .map(([id, check]) => {
-      if (!check) return '';
+      if (!check) {return '';}
       return `
   <div class="check ${check.ok ? 'ok' : 'fail'}">
     <h3>${check.ok ? '✅' : '❌'} ${capitalize(id)}</h3>
@@ -169,6 +177,35 @@ function formatCoverage(
     parts.push(`${coverage.lines}% lines${thresholdStr}`);
   }
   return parts.join(', ');
+}
+
+function renderDetailedPackagesHtml(packageResults: Array<{ package: { name: string; path: string }; checks: Partial<Record<CheckId, AuditCheckResult>>; overall: { ok: boolean; failReasons: string[] } }>): string {
+  return packageResults.map(pkgResult => {
+    const failedChecks = Object.entries(pkgResult.checks).filter(
+      ([, check]) => check && !check.ok
+    );
+    
+    if (failedChecks.length === 0) {return '';}
+    
+    const checksHtml = failedChecks.map(([checkId, check]) => {
+      if (!check) {return '';}
+      const detailsHtml = renderCheckDetailsHtml(check.details);
+      return `
+    <div class="check fail">
+      <h4>${capitalize(checkId)}</h4>
+      ${check.code ? `<p><strong>Code:</strong> ${escapeHtml(check.code)}</p>` : ''}
+      ${check.hint ? `<p><em>${escapeHtml(check.hint)}</em></p>` : ''}
+      ${detailsHtml}
+    </div>`;
+    }).join('');
+    
+    return `
+  <div class="check fail" style="margin-bottom: 30px;">
+    <h3>${escapeHtml(pkgResult.package.name)}</h3>
+    <p><strong>Path:</strong> <code>${escapeHtml(pkgResult.package.path)}</code></p>
+    ${checksHtml}
+  </div>`;
+  }).join('');
 }
 
 function escapeHtml(str: string): string {

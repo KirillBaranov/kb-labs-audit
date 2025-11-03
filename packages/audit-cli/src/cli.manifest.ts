@@ -80,12 +80,25 @@ export const commands: CommandManifest[] = [
         type: 'boolean',
         description: 'Generate HTML summary',
       },
+      {
+        name: 'dry-run',
+        type: 'boolean',
+        alias: 'n',
+        description: 'Show what would be checked without running checks',
+      },
+      {
+        name: 'verbose',
+        type: 'boolean',
+        alias: 'v',
+        description: 'Show detailed error information per package',
+      },
     ],
     examples: [
       'kb audit run',
       'kb audit run --scope packages/*',
       'kb audit run --strict --json',
       'kb audit run --profile frontend --md',
+      'kb audit run --dry-run',
     ],
   },
   {
