@@ -13,6 +13,7 @@
   },
   "files": [
     "dist",
+    "workflows",
     "README.md",
     "LICENSE"
   ],
@@ -41,13 +42,15 @@
     "@kb-labs/analytics-sdk-node": "link:../../../kb-labs-analytics/packages/analytics-sdk-node",
     "@kb-labs/audit-core": "link:../audit-core",
     "@kb-labs/audit-checks": "link:../audit-checks",
+    "@kb-labs/audit-contracts": "link:../audit-contracts",
     "@kb-labs/cli-core": "link:../../../kb-labs-cli/packages/core",
     "@kb-labs/cli-commands": "link:../../../kb-labs-cli/packages/commands",
     "@kb-labs/core": "link:../../../kb-labs-core",
+    "@kb-labs/plugin-manifest": "link:../../../kb-labs-plugin/packages/manifest",
     "@kb-labs/shared-cli-ui": "link:../../../kb-labs-shared/packages/cli-ui",
     "execa": "^8.0.0",
     "globby": "^11.0.0",
-    "yaml": "^2.5.1"
+    "yaml": "^2.8.0"
   },
   "devDependencies": {
     "@kb-labs/devkit": "link:../../../kb-labs-devkit",
@@ -58,7 +61,8 @@
     "vitest": "^3"
   },
   "kb": {
-    "commandsManifest": "./dist/cli.manifest.js"
+    "manifest": "./dist/manifest.v2.js",
+    "plugin": true
   }
 }
 
