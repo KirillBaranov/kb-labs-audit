@@ -1,0 +1,23 @@
+name: audit-run
+version: '0.1.0'
+description: Run quality audit checks on workspace
+
+on:
+  manual: true
+  push: true
+
+jobs:
+  audit:
+    runsOn: local
+    steps:
+      - name: Run audit checks
+        uses: plugin:@kb-labs/audit/cli/run
+        with:
+          scope: 'packages/*'
+          json: true
+      
+      - name: Generate markdown report
+        uses: plugin:@kb-labs/audit/cli/run
+        with:
+          md: true
+
