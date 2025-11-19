@@ -1,5 +1,11 @@
 export * from './schema.js';
 export * from './types.js';
+export {
+  pluginContractsManifest,
+  type PluginArtifactIds,
+  type PluginCommandIds,
+  type PluginRouteIds,
+} from './contract.js';
 // Re-export types for convenience
 export type {
   AuditCheckResultContract,

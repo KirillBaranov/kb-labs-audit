@@ -1,54 +1,69 @@
-/**
- * Core types for KB Labs Audit
- * Shared between audit-core and audit-checks to avoid circular dependencies
- */
+// Re-export types from plugin-template-contracts for consistency
+// These types define the structure of PluginContracts
 
-export type CheckId = 'style' | 'types' | 'tests' | 'build' | 'devlink' | 'mind' | 'security';
+export type ArtifactKind = 'file' | 'json' | 'markdown' | 'binary' | 'dir' | 'log' | 'text';
 
-export interface AuditCheckResult {
-  id: CheckId;
-  ok: boolean;
-  code?: string;
-  details?: unknown;
-  hint?: string;
-  timingMs?: number;
+export interface ArtifactExample {
+  summary?: string;
+  payload?: unknown;
 }
 
-export interface CoverageThresholds {
-  lines: number;
-  branches: number;
-  functions: number;
-  statements: number;
+export interface PluginArtifactContract {
+  id: string;
+  kind: ArtifactKind;
+  description?: string;
+  pathPattern?: string;
+  mediaType?: string;
+  schemaRef?: string;
+  example?: ArtifactExample;
 }
 
-/**
- * Type guard for test check details
- */
-export interface TestsCheckDetails {
-  coverage?: {
-    lines?: number;
-    branches?: number;
-    functions?: number;
-    statements?: number;
-  };
-  threshold?: CoverageThresholds;
-  errors?: number;
-  warnings?: number;
-  failed?: number;
-  passed?: number;
-  total?: number;
-  exitCode?: number;
-  error?: string;
+export type ArtifactContractsMap = Record<string, PluginArtifactContract>;
+
+export interface SchemaReference {
+  ref: string;
+  format?: 'zod' | 'json-schema' | 'openapi';
+  description?: string;
 }
 
-/**
- * Type guard for package-scoped check details
- */
-export interface PackageScopedCheckDetails {
-  packages?: Array<{
-    name: string;
-    path: string;
-    ok: boolean;
-    error?: string;
-  }>;
+export interface CommandContract {
+  id: string;
+  description?: string;
+  input?: SchemaReference;
+  output?: SchemaReference;
+  produces?: string[];
+  consumes?: string[];
+  examples?: string[];
+}
+
+export type CommandContractsMap = Record<string, CommandContract>;
+
+export interface RestRouteContract {
+  id: string;
+  method: string;
+  path: string;
+  description?: string;
+  request?: SchemaReference;
+  response?: SchemaReference;
+  produces?: string[];
+  consumes?: string[];
+}
+
+export interface RestApiContract {
+  basePath: string;
+  routes: Record<string, RestRouteContract>;
+}
+
+export interface ApiContract {
+  rest?: RestApiContract;
+}
+
+export interface PluginContracts {
+  schema: 'kb.plugin.contracts/1';
+  pluginId: string;
+  contractsVersion: string;
+  artifacts: ArtifactContractsMap;
+  commands?: CommandContractsMap;
+  workflows?: Record<string, unknown>;
+  api?: ApiContract;
 }
