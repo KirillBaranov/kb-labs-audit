@@ -45,6 +45,7 @@
     "@kb-labs/audit-contracts": "link:../audit-contracts",
     "@kb-labs/cli-core": "link:../../../kb-labs-cli/packages/core",
     "@kb-labs/cli-commands": "link:../../../kb-labs-cli/packages/commands",
+    "@kb-labs/cli-command-kit": "workspace:*",
     "@kb-labs/core": "link:../../../kb-labs-core",
     "@kb-labs/plugin-manifest": "link:../../../kb-labs-plugin/packages/manifest",
     "@kb-labs/plugin-contracts": "link:../../../kb-labs-plugin/packages/plugin-contracts",
