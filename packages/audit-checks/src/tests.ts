@@ -2,9 +2,9 @@
  * Tests check adapter (vitest)
  */
 
-import { execa } from 'execa';
 import { BaseCheckAdapter } from './base.js';
-import type { AuditCheckResult, CoverageThresholds } from '@kb-labs/audit-core';
+import type { AuditCheckResult, CoverageThresholds } from '@kb-labs/audit-contracts';
+import type { ShellApi } from '@kb-labs/audit-core';
 
 export class TestsCheck extends BaseCheckAdapter {
   id = 'tests' as const;
@@ -12,36 +12,40 @@ export class TestsCheck extends BaseCheckAdapter {
   async run(
     cwd: string,
     timeoutMs: number,
-    ...args: unknown[]
+    shell?: ShellApi,
+    coverageThresholds?: CoverageThresholds
   ): Promise<AuditCheckResult> {
-    const coverageThresholds = args[0] as CoverageThresholds | undefined;
     const start = Date.now();
 
     try {
+      if (!shell) {
+        return this.createErrorResult(
+          'SHELL_NOT_AVAILABLE',
+          'Shell API not available',
+          Date.now() - start,
+          { error: 'Shell API is required for running checks' }
+        );
+      }
+
       // Check if vitest is available
-      try {
-        await execa('vitest', ['--version'], { cwd, timeout: 5000 });
-      } catch {
+      const versionResult = await shell.exec('vitest', ['--version'], { cwd, timeoutMs: 5000 });
+      if (!versionResult.ok) {
         return this.createSkippedResult('vitest not installed');
       }
 
       // Run vitest with JSON reporter
-      const { stdout, exitCode } = await execa(
-        'vitest',
-        ['run', '--reporter=json'],
-        {
-          cwd,
-          timeout: timeoutMs,
-          reject: false,
-        }
-      );
+      const result = await shell.exec('vitest', ['run', '--reporter=json'], {
+        cwd,
+        timeoutMs,
+      });
+      const { stdout, exitCode } = result;
 
       const timingMs = Date.now() - start;
 
       // Parse JSON output
-      let result: any;
+      let parsedResult: any;
       try {
-        result = JSON.parse(stdout || '{}');
+        parsedResult = JSON.parse(stdout || '{}');
       } catch {
         return this.createErrorResult(
           'PARSE_ERROR',
@@ -51,15 +55,15 @@ export class TestsCheck extends BaseCheckAdapter {
       }
 
       // Extract test results
-      const numFailedTests = result.numFailedTests || 0;
-      const numPassedTests = result.numPassedTests || 0;
-      const numTotalTests = result.numTotalTests || 0;
+      const numFailedTests = parsedResult.numFailedTests || 0;
+      const numPassedTests = parsedResult.numPassedTests || 0;
+      const numTotalTests = parsedResult.numTotalTests || 0;
 
       // Extract coverage if available
       let coverage: any = undefined;
-      if (result.coverageMap) {
+      if (parsedResult.coverageMap) {
         // Coverage data structure from vitest
-        const coverageSummary = result.coverageMap?.coverageMap?.summary;
+        const coverageSummary = parsedResult.coverageMap?.coverageMap?.summary;
         if (coverageSummary) {
           coverage = {
             lines: Math.round(coverageSummary.lines?.pct || 0),

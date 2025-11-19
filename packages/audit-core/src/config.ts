@@ -1,13 +1,15 @@
 /**
  * Configuration loader for @kb-labs/audit-core
- * Merges: kb-labs.config.json → devkit profile → defaults
+ * Merges: kb-labs.config.json → defaults
  */
 
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { resolveProfile } from '@kb-labs/shared-profiles';
-import { findRepoRoot } from '@kb-labs/core';
-import type { AuditConfig, CoverageThresholds } from './types.js';
+import { findRepoRoot, getLogger } from '@kb-labs/core';
+import type { CoverageThresholds } from '@kb-labs/audit-contracts';
+import type { AuditConfig } from './types.js';
+
+const log = getLogger('audit-core');
 
 const DEFAULT_COVERAGE_THRESHOLDS: CoverageThresholds = {
   lines: 90,
@@ -41,84 +43,16 @@ const DEFAULT_CONFIG: AuditConfig = {
 };
 
 /**
- * Extract coverage thresholds from profile
- */
-function extractCoverageThresholds(profile: any): CoverageThresholds | undefined {
-  // Try policies.coverageThresholds first
-  if (profile.policies?.coverageThresholds) {
-    const ct = profile.policies.coverageThresholds;
-    if (
-      typeof ct.lines === 'number' &&
-      typeof ct.branches === 'number' &&
-      typeof ct.functions === 'number' &&
-      typeof ct.statements === 'number'
-    ) {
-      return {
-        lines: ct.lines,
-        branches: ct.branches,
-        functions: ct.functions,
-        statements: ct.statements,
-      };
-    }
-  }
-
-  // Try meta.coverageThresholds
-  if (profile.meta?.coverageThresholds) {
-    const ct = profile.meta.coverageThresholds;
-    if (
-      typeof ct.lines === 'number' &&
-      typeof ct.branches === 'number' &&
-      typeof ct.functions === 'number' &&
-      typeof ct.statements === 'number'
-    ) {
-      return {
-        lines: ct.lines,
-        branches: ct.branches,
-        functions: ct.functions,
-        statements: ct.statements,
-      };
-    }
-  }
-
-  return undefined;
-}
-
-/**
- * Load configuration with priority: config file → profile → defaults
+ * Load configuration with priority: config file → defaults
  */
 export async function loadConfig(opts: {
   cwd?: string;
-  profileId?: string;
-  profilesDir?: string;
 }): Promise<AuditConfig> {
   const cwd = opts.cwd || process.cwd();
   const repoRoot = await findRepoRoot(cwd);
 
   // Start with defaults
   let config: AuditConfig = { ...DEFAULT_CONFIG };
-
-  // Try to load devkit profile for thresholds
-  if (opts.profileId || opts.profilesDir) {
-    try {
-      const profileId = opts.profileId || 'frontend';
-      const { profile } = await resolveProfile({
-        repoRoot,
-        profileId,
-        profilesDir: opts.profilesDir,
-      });
-
-      const coverageThresholds = extractCoverageThresholds(profile);
-      if (coverageThresholds) {
-        config.thresholds = {
-          ...config.thresholds,
-          coverage: coverageThresholds,
-        };
-      }
-    } catch (error) {
-      // Profile not found or invalid - continue with defaults
-      console.warn(`[audit] Could not load profile: ${error instanceof Error ? error.message : String(error)}`);
-    }
-  }
 
   // Load kb-labs.config.json and merge (highest priority)
   try {
@@ -150,7 +84,9 @@ export async function loadConfig(opts: {
   } catch (error) {
     // Config file not found - continue with profile/defaults
     if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
-      console.warn(`[audit] Could not load kb-labs.config.json: ${error instanceof Error ? error.message : String(error)}`);
+      log.warn('Could not load kb-labs.config.json', {
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 

@@ -2,7 +2,7 @@
  * Check adapter registry
  */
 
-import type { CheckId } from './types';
+import type { CheckId } from '@kb-labs/audit-contracts';
 import type { CheckAdapter } from './runner';
 
 /**
@@ -18,7 +18,6 @@ export async function createCheckRegistry(): Promise<Map<CheckId, CheckAdapter>>
   
   try {
     // Strategy 1: Direct import (works in same workspace)
-    // @ts-expect-error - dynamic import, type checking happens at runtime
     adaptersModule = await import('@kb-labs/audit-checks');
   } catch {
     try {

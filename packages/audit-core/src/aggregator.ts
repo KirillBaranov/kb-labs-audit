@@ -2,7 +2,7 @@
  * Result aggregation and summary computation
  */
 
-import type { AuditCheckResult, AuditReport, CheckId, CoverageThresholds } from './types.js';
+import type { AuditCheckResult, CheckId, CoverageThresholds, TestsCheckDetails } from '@kb-labs/audit-contracts';
 
 export interface AggregationOptions {
   coverageThresholds?: CoverageThresholds;
@@ -29,21 +29,21 @@ export function aggregateResults(
 
     // Check coverage thresholds if this is a tests check
     if (id === 'tests' && result.details && typeof result.details === 'object') {
-      const testsDetails = result.details as any;
+      const testsDetails = result.details as TestsCheckDetails;
       if (testsDetails.coverage && options.coverageThresholds) {
         const coverage = testsDetails.coverage;
         const thresholds = options.coverageThresholds;
 
-        if (coverage.lines < thresholds.lines) {
+        if (coverage.lines !== undefined && coverage.lines < thresholds.lines) {
           failReasons.push(`tests.coverage.lines<${thresholds.lines}`);
         }
-        if (coverage.branches < thresholds.branches) {
+        if (coverage.branches !== undefined && coverage.branches < thresholds.branches) {
           failReasons.push(`tests.coverage.branches<${thresholds.branches}`);
         }
-        if (coverage.functions < thresholds.functions) {
+        if (coverage.functions !== undefined && coverage.functions < thresholds.functions) {
           failReasons.push(`tests.coverage.functions<${thresholds.functions}`);
         }
-        if (coverage.statements < thresholds.statements) {
+        if (coverage.statements !== undefined && coverage.statements < thresholds.statements) {
           failReasons.push(`tests.coverage.statements<${thresholds.statements}`);
         }
       }

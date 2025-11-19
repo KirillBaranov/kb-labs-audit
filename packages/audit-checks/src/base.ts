@@ -2,17 +2,18 @@
  * Base adapter class for audit checks
  */
 
-import type { AuditCheckResult, CheckId } from '@kb-labs/audit-core';
+import type { AuditCheckResult, CheckId } from '@kb-labs/audit-contracts';
+import type { ShellApi } from '@kb-labs/audit-core';
 
 export interface CheckAdapter {
   id: CheckId;
-  run(cwd: string, timeoutMs: number, ...args: unknown[]): Promise<AuditCheckResult>;
+  run(cwd: string, timeoutMs: number, shell?: ShellApi, ...args: unknown[]): Promise<AuditCheckResult>;
 }
 
 export abstract class BaseCheckAdapter implements CheckAdapter {
   abstract id: CheckId;
 
-  abstract run(cwd: string, timeoutMs: number, ...args: unknown[]): Promise<AuditCheckResult>;
+  abstract run(cwd: string, timeoutMs: number, shell?: ShellApi, ...args: unknown[]): Promise<AuditCheckResult>;
 
   protected createErrorResult(
     code: string,

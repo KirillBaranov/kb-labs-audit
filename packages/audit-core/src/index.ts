@@ -5,3 +5,6 @@ export * from './runner';
 export * from './check-registry';
 export * from './reporters';
 
+// Explicitly export Shell types and RunnerOptions for better TypeScript support
+export type { ShellApi, ShellResult, RunnerOptions } from './runner';
+

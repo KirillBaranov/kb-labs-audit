@@ -11,13 +11,13 @@ jobs:
     runsOn: local
     steps:
       - name: Run audit checks
-        uses: plugin:@kb-labs/audit/cli/run
+        uses: plugin:@kb-labs/audit/cli/audit:run
         with:
           scope: 'packages/*'
           json: true
       
       - name: Generate markdown report
-        uses: plugin:@kb-labs/audit/cli/run
+        uses: plugin:@kb-labs/audit/cli/audit:run
         with:
           md: true
 

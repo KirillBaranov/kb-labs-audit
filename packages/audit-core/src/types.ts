@@ -2,16 +2,10 @@
  * Core types for @kb-labs/audit-core
  */
 
-export type CheckId = 'style' | 'types' | 'tests' | 'build' | 'devlink' | 'mind' | 'security';
+import type { CheckId, AuditCheckResult, CoverageThresholds } from '@kb-labs/audit-contracts';
 
-export interface AuditCheckResult {
-  id: CheckId;
-  ok: boolean;
-  code?: string;
-  details?: unknown;
-  hint?: string;
-  timingMs?: number;
-}
+// Re-export types from contracts to maintain backward compatibility
+export type { CheckId, AuditCheckResult, CoverageThresholds };
 
 export interface AuditReport {
   schemaVersion: '1.0';
@@ -32,13 +26,6 @@ export interface AuditReport {
     pnpm?: string;
     timingMs: { total: number };
   };
-}
-
-export interface CoverageThresholds {
-  lines: number;
-  branches: number;
-  functions: number;
-  statements: number;
 }
 
 export interface AuditConfig {

@@ -2,12 +2,29 @@
  * Main audit runner - orchestrates check execution
  */
 
-import type { AuditConfig, AuditCheckResult, CheckId } from './types';
+import type { AuditCheckResult, CheckId, CoverageThresholds } from '@kb-labs/audit-contracts';
+import type { ShellApi as ShellApiContract, ShellResult as ShellResultContract } from '@kb-labs/plugin-contracts';
+import type { AuditConfig } from './types';
 import { aggregateResults } from './aggregator';
+
+/**
+ * Shell API interface for audit checks
+ * Simplified version that only requires exec method (spawn not needed for audit checks)
+ * Uses ShellApi from @kb-labs/plugin-contracts
+ */
+export type ShellApi = Pick<ShellApiContract, 'exec'>;
+
+// Re-export ShellResult for convenience
+export type ShellResult = ShellResultContract;
 
 export interface CheckAdapter {
   id: CheckId;
-  run(cwd: string, timeoutMs: number, ...args: unknown[]): Promise<AuditCheckResult>;
+  run(cwd: string, timeoutMs: number, shell?: ShellApi, ...args: unknown[]): Promise<AuditCheckResult>;
+}
+
+export interface TestsCheckAdapter extends CheckAdapter {
+  id: 'tests';
+  run(cwd: string, timeoutMs: number, shell?: ShellApi, coverageThresholds?: CoverageThresholds): Promise<AuditCheckResult>;
 }
 
 export interface RunnerOptions {
@@ -15,6 +32,7 @@ export interface RunnerOptions {
   cwd: string;
   profile?: string;
   adapters?: Map<CheckId, CheckAdapter>;
+  shell?: ShellApi;
 }
 
 /**
@@ -24,7 +42,7 @@ export async function runAudit(options: RunnerOptions): Promise<{
   checks: Partial<Record<CheckId, AuditCheckResult>>;
   overall: { ok: boolean; failReasons: string[] };
 }> {
-  const { config, cwd, adapters } = options;
+  const { config, cwd, adapters, shell } = options;
 
   // Get enabled checks
   const enabledChecks = config.enable || [];
@@ -52,11 +70,12 @@ export async function runAudit(options: RunnerOptions): Promise<{
       const timeoutMs = getTimeoutForCheck(id, config);
       try {
         // Special handling for TestsCheck which needs coverage thresholds
-        if (id === 'tests' && 'run' in adapter && typeof adapter.run === 'function') {
-          const result = await (adapter.run as any)(cwd, timeoutMs, config.thresholds?.coverage);
+        if (id === 'tests' && config.thresholds?.coverage) {
+          const testsAdapter = adapter as TestsCheckAdapter;
+          const result = await testsAdapter.run(cwd, timeoutMs, shell, config.thresholds.coverage);
           return { id, result };
         }
-        const result = await adapter.run(cwd, timeoutMs);
+        const result = await adapter.run(cwd, timeoutMs, shell);
         return { id, result };
       } catch (error) {
         return {

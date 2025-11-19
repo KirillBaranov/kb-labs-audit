@@ -279,24 +279,50 @@ export const manifest: ManifestV2 = {
       },
     ],
   },
-  capabilities: ['fs:read', 'fs:write'],
-  permissions: {
-    fs: {
-      mode: 'readWrite',
-      allow: fileAllowList,
-      deny: ['**/*.key', '**/*.secret', '**/node_modules/**'],
+    capabilities: ['fs:read', 'fs:write', 'shell:exec'],
+    permissions: {
+      fs: {
+        mode: 'readWrite',
+        allow: fileAllowList,
+        deny: ['**/*.key', '**/*.secret', '**/node_modules/**'],
+      },
+      net: 'none',
+      env: {
+        allow: ['NODE_ENV', 'KB_LABS_REPO_ROOT'],
+      },
+      quotas: {
+        timeoutMs: 120000,
+        memoryMb: 4096,
+        cpuMs: 45000,
+      },
+      capabilities: ['fs:read', 'fs:write', 'shell:exec'],
+      artifacts: {
+        write: [
+          {
+            to: 'self',
+            paths: ['.kb/audit/**'],
+          },
+        ],
+      },
+      shell: {
+        allow: [
+          'tsc',
+          'eslint',
+          'vitest',
+          'pnpm',
+          'pnpm exec vite',
+          'pnpm exec *',
+          'npm audit',
+          'kb --version',
+        ],
+        requireConfirmation: [
+          'rm -rf',
+          'rm -r',
+          'git reset --hard',
+        ],
+        timeoutMs: 120000,
+      },
     },
-    net: 'none',
-    env: {
-      allow: ['NODE_ENV', 'KB_LABS_REPO_ROOT'],
-    },
-    quotas: {
-            timeoutMs: 120000,
-            memoryMb: 4096,
-            cpuMs: 45000,
-    },
-    capabilities: ['fs:read', 'fs:write'],
-  },
   artifacts: [
     {
       id: 'audit.report.json',
@@ -312,14 +338,6 @@ export const manifest: ManifestV2 = {
       id: 'audit.summary.txt',
       pathTemplate: '.kb/audit/summary.txt',
       description: 'Plain text summary for CI logs.',
-    },
-  ],
-  workflows: [
-    {
-      id: 'audit-run',
-      file: 'workflows/audit-run.yml',
-      description: 'Run quality audit checks on workspace',
-      tags: ['audit', 'quality'],
     },
   ],
 };

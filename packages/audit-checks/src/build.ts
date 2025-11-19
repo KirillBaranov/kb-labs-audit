@@ -3,29 +3,38 @@
  * Detects build tool (tsup, rollup, vite) and runs build
  */
 
-import { execa } from 'execa';
 import { existsSync, statSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { BaseCheckAdapter } from './base.js';
-import type { AuditCheckResult } from '@kb-labs/audit-core';
+import type { AuditCheckResult } from '@kb-labs/audit-contracts';
+import type { ShellApi } from '@kb-labs/audit-core';
 
 export class BuildCheck extends BaseCheckAdapter {
   id = 'build' as const;
 
-  async run(cwd: string, timeoutMs: number): Promise<AuditCheckResult> {
+  async run(cwd: string, timeoutMs: number, shell?: ShellApi): Promise<AuditCheckResult> {
     const start = Date.now();
 
     try {
+      if (!shell) {
+        return this.createErrorResult(
+          'SHELL_NOT_AVAILABLE',
+          'Shell API not available',
+          Date.now() - start,
+          { error: 'Shell API is required for running checks' }
+        );
+      }
+
       // Detect build tool
       const buildCommand = this.detectBuildTool(cwd);
 
       if (!buildCommand) {
         // Fallback to pnpm build
-        return this.runBuild(cwd, timeoutMs, ['pnpm', 'build'], start);
+        return this.runBuild(cwd, timeoutMs, ['pnpm', 'build'], start, shell);
       }
 
-      return this.runBuild(cwd, timeoutMs, buildCommand, start);
+      return this.runBuild(cwd, timeoutMs, buildCommand, start, shell);
     } catch (error: unknown) {
       const timingMs = Date.now() - start;
       return this.createErrorResult(
@@ -60,7 +69,8 @@ export class BuildCheck extends BaseCheckAdapter {
     cwd: string,
     timeoutMs: number,
     command: string[],
-    startTime: number
+    startTime: number,
+    shell: ShellApi
   ): Promise<AuditCheckResult> {
     if (command.length === 0) {
       return this.createErrorResult('INVALID_COMMAND', 'Empty build command', Date.now() - startTime);
@@ -72,11 +82,11 @@ export class BuildCheck extends BaseCheckAdapter {
     }
 
     // Run build
-    const { exitCode } = await execa(cmd, args, {
+    const result = await shell.exec(cmd, args, {
       cwd,
-      timeout: timeoutMs,
-      reject: false,
+      timeoutMs,
     });
+    const { exitCode } = result;
 
     const timingMs = Date.now() - startTime;
 

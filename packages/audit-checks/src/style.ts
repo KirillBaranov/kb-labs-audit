@@ -2,34 +2,38 @@
  * Style check adapter (eslint)
  */
 
-import { execa } from 'execa';
 import { BaseCheckAdapter } from './base.js';
-import type { AuditCheckResult } from '@kb-labs/audit-core';
+import type { AuditCheckResult } from '@kb-labs/audit-contracts';
+import type { ShellApi } from '@kb-labs/audit-core';
 
 export class StyleCheck extends BaseCheckAdapter {
   id = 'style' as const;
 
-  async run(cwd: string, timeoutMs: number): Promise<AuditCheckResult> {
+  async run(cwd: string, timeoutMs: number, shell?: ShellApi): Promise<AuditCheckResult> {
     const start = Date.now();
 
     try {
+      if (!shell) {
+        return this.createErrorResult(
+          'SHELL_NOT_AVAILABLE',
+          'Shell API not available',
+          Date.now() - start,
+          { error: 'Shell API is required for running checks' }
+        );
+      }
+
       // Check if eslint is available
-      try {
-        await execa('eslint', ['--version'], { cwd, timeout: 5000 });
-      } catch {
+      const versionResult = await shell.exec('eslint', ['--version'], { cwd, timeoutMs: 5000 });
+      if (!versionResult.ok) {
         return this.createSkippedResult('eslint not installed');
       }
 
       // Run eslint
-      const { stdout, exitCode } = await execa(
-        'eslint',
-        ['.', '--format', 'json'],
-        {
-          cwd,
-          timeout: timeoutMs,
-          reject: false, // Don't throw on non-zero exit
-        }
-      );
+      const result = await shell.exec('eslint', ['.', '--format', 'json'], {
+        cwd,
+        timeoutMs,
+      });
+      const { stdout, exitCode } = result;
 
       const timingMs = Date.now() - start;
 

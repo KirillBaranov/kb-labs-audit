@@ -3,7 +3,8 @@
  * Lightweight HTML dashboard
  */
 
-import type { AuditReport, CheckId, AuditCheckResult } from '../types.js';
+import type { CheckId, AuditCheckResult } from '@kb-labs/audit-contracts';
+import type { AuditReport } from '../types.js';
 
 /**
  * Render audit results as HTML

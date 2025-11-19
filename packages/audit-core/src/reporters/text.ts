@@ -3,7 +3,8 @@
  * Ultra-compact, CI-friendly format
  */
 
-import type { AuditReport, CheckId, AuditCheckResult } from '../types';
+import type { CheckId, AuditCheckResult, TestsCheckDetails } from '@kb-labs/audit-contracts';
+import type { AuditReport } from '../types';
 
 /**
  * Render audit results as plain text
@@ -83,7 +84,9 @@ export function renderText(
             lines.push(`    Hint: ${check.hint}`);
           }
           
-          const details = check.details as any;
+          const details = (check.details && typeof check.details === 'object' 
+            ? check.details as TestsCheckDetails 
+            : {}) as TestsCheckDetails;
           if (details) {
             if (details.errors !== undefined) {
               lines.push(`    Errors: ${details.errors}`);
@@ -98,10 +101,10 @@ export function renderText(
               const cov = details.coverage;
               const thresh = details.threshold;
               const issues: string[] = [];
-              if (cov.lines < thresh.lines) {issues.push(`lines: ${cov.lines}% < ${thresh.lines}%`);}
-              if (cov.branches < thresh.branches) {issues.push(`branches: ${cov.branches}% < ${thresh.branches}%`);}
-              if (cov.functions < thresh.functions) {issues.push(`functions: ${cov.functions}% < ${thresh.functions}%`);}
-              if (cov.statements < thresh.statements) {issues.push(`statements: ${cov.statements}% < ${thresh.statements}%`);}
+              if (cov.lines !== undefined && cov.lines < thresh.lines) {issues.push(`lines: ${cov.lines}% < ${thresh.lines}%`);}
+              if (cov.branches !== undefined && cov.branches < thresh.branches) {issues.push(`branches: ${cov.branches}% < ${thresh.branches}%`);}
+              if (cov.functions !== undefined && cov.functions < thresh.functions) {issues.push(`functions: ${cov.functions}% < ${thresh.functions}%`);}
+              if (cov.statements !== undefined && cov.statements < thresh.statements) {issues.push(`statements: ${cov.statements}% < ${thresh.statements}%`);}
               if (issues.length > 0) {
                 lines.push(`    Coverage: ${issues.join(', ')}`);
               }

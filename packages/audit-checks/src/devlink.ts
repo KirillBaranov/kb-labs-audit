@@ -3,41 +3,45 @@
  * Calls: kb devlink check --json
  */
 
-import { execa } from 'execa';
 import { BaseCheckAdapter } from './base.js';
-import type { AuditCheckResult } from '@kb-labs/audit-core';
+import type { AuditCheckResult } from '@kb-labs/audit-contracts';
+import type { ShellApi } from '@kb-labs/audit-core';
 
 export class DevLinkCheck extends BaseCheckAdapter {
   id = 'devlink' as const;
 
-  async run(cwd: string, timeoutMs: number): Promise<AuditCheckResult> {
+  async run(cwd: string, timeoutMs: number, shell?: ShellApi): Promise<AuditCheckResult> {
     const start = Date.now();
 
     try {
+      if (!shell) {
+        return this.createErrorResult(
+          'SHELL_NOT_AVAILABLE',
+          'Shell API not available',
+          Date.now() - start,
+          { error: 'Shell API is required for running checks' }
+        );
+      }
+
       // Check if kb CLI is available
-      try {
-        await execa('kb', ['--version'], { cwd, timeout: 5000 });
-      } catch {
+      const versionResult = await shell.exec('kb', ['--version'], { cwd, timeoutMs: 5000 });
+      if (!versionResult.ok) {
         return this.createSkippedResult('kb CLI not installed');
       }
 
       // Run kb devlink check --json
-      const { stdout, exitCode } = await execa(
-        'kb',
-        ['devlink', 'check', '--json'],
-        {
-          cwd,
-          timeout: timeoutMs,
-          reject: false,
-        }
-      );
+      const result = await shell.exec('kb', ['devlink', 'check', '--json'], {
+        cwd,
+        timeoutMs,
+      });
+      const { stdout, exitCode } = result;
 
       const timingMs = Date.now() - start;
 
       // Parse JSON output
-      let result: any;
+      let parsedResult: any;
       try {
-        result = JSON.parse(stdout || '{}');
+        parsedResult = JSON.parse(stdout || '{}');
       } catch {
         return this.createErrorResult(
           'PARSE_ERROR',
@@ -47,8 +51,8 @@ export class DevLinkCheck extends BaseCheckAdapter {
       }
 
       // Extract cycles and mismatches
-      const cycles = result.cycles || [];
-      const mismatches = result.mismatches || [];
+      const cycles = parsedResult.cycles || [];
+      const mismatches = parsedResult.mismatches || [];
       const ok = exitCode === 0 && cycles.length === 0 && mismatches.length === 0;
 
       return {

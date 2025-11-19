@@ -2,34 +2,38 @@
  * Types check adapter (tsc --noEmit)
  */
 
-import { execa } from 'execa';
 import { BaseCheckAdapter } from './base.js';
-import type { AuditCheckResult } from '@kb-labs/audit-core';
+import type { AuditCheckResult } from '@kb-labs/audit-contracts';
+import type { ShellApi } from '@kb-labs/audit-core';
 
 export class TypesCheck extends BaseCheckAdapter {
   id = 'types' as const;
 
-  async run(cwd: string, timeoutMs: number): Promise<AuditCheckResult> {
+  async run(cwd: string, timeoutMs: number, shell?: ShellApi): Promise<AuditCheckResult> {
     const start = Date.now();
 
     try {
+      if (!shell) {
+        return this.createErrorResult(
+          'SHELL_NOT_AVAILABLE',
+          'Shell API not available',
+          Date.now() - start,
+          { error: 'Shell API is required for running checks' }
+        );
+      }
+
       // Check if tsc is available
-      try {
-        await execa('tsc', ['--version'], { cwd, timeout: 5000 });
-      } catch {
+      const versionResult = await shell.exec('tsc', ['--version'], { cwd, timeoutMs: 5000 });
+      if (!versionResult.ok) {
         return this.createSkippedResult('tsc not installed');
       }
 
       // Run tsc --noEmit
-      const { stderr, exitCode } = await execa(
-        'tsc',
-        ['--noEmit', '--pretty', 'false'],
-        {
-          cwd,
-          timeout: timeoutMs,
-          reject: false,
-        }
-      );
+      const result = await shell.exec('tsc', ['--noEmit', '--pretty', 'false'], {
+        cwd,
+        timeoutMs,
+      });
+      const { stderr, exitCode } = result;
 
       const timingMs = Date.now() - start;
 

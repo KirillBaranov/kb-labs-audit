@@ -3,20 +3,29 @@
  * Calls: kb mind verify --json
  */
 
-import { execa } from 'execa';
-import { existsSync, statSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { BaseCheckAdapter } from './base.js';
-import type { AuditCheckResult } from '@kb-labs/audit-core';
+import type { AuditCheckResult } from '@kb-labs/audit-contracts';
+import type { ShellApi } from '@kb-labs/audit-core';
 
 export class MindCheck extends BaseCheckAdapter {
   id = 'mind' as const;
 
-  async run(cwd: string, timeoutMs: number): Promise<AuditCheckResult> {
+  async run(cwd: string, timeoutMs: number, shell?: ShellApi): Promise<AuditCheckResult> {
     const start = Date.now();
 
     try {
+      if (!shell) {
+        return this.createErrorResult(
+          'SHELL_NOT_AVAILABLE',
+          'Shell API not available',
+          Date.now() - start,
+          { error: 'Shell API is required for running checks' }
+        );
+      }
+
       // Check if .kb/mind directory exists
       const mindDir = join(cwd, '.kb', 'mind');
       if (!existsSync(mindDir)) {
@@ -24,29 +33,24 @@ export class MindCheck extends BaseCheckAdapter {
       }
 
       // Check if kb CLI is available
-      try {
-        await execa('kb', ['--version'], { cwd, timeout: 5000 });
-      } catch {
+      const versionResult = await shell.exec('kb', ['--version'], { cwd, timeoutMs: 5000 });
+      if (!versionResult.ok) {
         return this.createSkippedResult('kb CLI not installed');
       }
 
       // Run kb mind verify --json
-      const { stdout, exitCode } = await execa(
-        'kb',
-        ['mind', 'verify', '--json'],
-        {
-          cwd,
-          timeout: timeoutMs,
-          reject: false,
-        }
-      );
+      const result = await shell.exec('kb', ['mind', 'verify', '--json'], {
+        cwd,
+        timeoutMs,
+      });
+      const { stdout, exitCode } = result;
 
       const timingMs = Date.now() - start;
 
       // Parse JSON output
-      let result: any;
+      let parsedResult: any;
       try {
-        result = JSON.parse(stdout || '{}');
+        parsedResult = JSON.parse(stdout || '{}');
       } catch {
         return this.createErrorResult(
           'PARSE_ERROR',
@@ -68,8 +72,8 @@ export class MindCheck extends BaseCheckAdapter {
         }
       }
 
-      const verifyOk = result.ok !== false;
-      const inconsistencies = result.inconsistencies || [];
+      const verifyOk = parsedResult.ok !== false;
+      const inconsistencies = parsedResult.inconsistencies || [];
       const ok = exitCode === 0 && verifyOk && inconsistencies.length === 0;
 
       return {
