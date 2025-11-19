@@ -38,10 +38,11 @@
     "test:watch": "vitest -c ../../vitest.config.ts"
   },
   "dependencies": {
+    "@kb-labs/audit-contracts": "link:../audit-contracts",
     "@kb-labs/core": "link:../../../kb-labs-core",
-    "@kb-labs/shared-profiles": "link:../../../kb-labs-shared/packages/profiles",
+    "@kb-labs/plugin-contracts": "link:../../../kb-labs-plugin/packages/plugin-contracts",
     "globby": "^11.0.0",
-    "yaml": "^2.5.1"
+    "yaml": "^2.8.0"
   },
   "devDependencies": {
     "@kb-labs/devkit": "link:../../../kb-labs-devkit",

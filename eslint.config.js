@@ -4,11 +4,8 @@ export default [
   ...nodePreset,
   {
     ignores: [
-      '**/dist/**',
-      '**/coverage/**',
-      '**/node_modules/**',
-      '**/*.d.ts',
       '**/tsup.config.ts',
+      '**/tsup.config.*.mjs',
       '**/vitest.config.ts',
       '**/*.vue'
     ]

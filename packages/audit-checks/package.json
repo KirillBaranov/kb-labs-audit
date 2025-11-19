@@ -38,7 +38,7 @@
     "test:watch": "vitest -c ../../vitest.config.ts"
   },
   "dependencies": {
-    "@kb-labs/audit-core": "link:../audit-core",
+    "@kb-labs/audit-contracts": "link:../audit-contracts",
     "execa": "^8.0.0",
     "fs-extra": "^11.0.0"
   },
