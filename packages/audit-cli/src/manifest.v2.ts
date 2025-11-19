@@ -1,4 +1,9 @@
-import type { ManifestV2 } from '@kb-labs/plugin-manifest';
+import { createManifestV2 } from '@kb-labs/plugin-manifest';
+import { pluginContractsManifest } from '@kb-labs/audit-contracts';
+
+/**
+ * Level 2: Типизация через contracts для автодополнения и проверки ID
+ */
 
 const fileAllowList = ['.kb/audit/**', '.kb/devkit/**', 'package.json', '**/package.json'];
 
@@ -117,7 +122,7 @@ const commands: CliCommands = [
   },
 ];
 
-export const manifest: ManifestV2 = {
+export const manifest = createManifestV2<typeof pluginContractsManifest>({
   schema: 'kb.plugin/2',
   id: '@kb-labs/audit',
   version: '0.1.0',
@@ -340,7 +345,7 @@ export const manifest: ManifestV2 = {
       description: 'Plain text summary for CI logs.',
     },
   ],
-};
+});
 
 export default manifest;
 
