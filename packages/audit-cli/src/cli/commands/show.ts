@@ -85,14 +85,36 @@ export const showCommand = defineCommand<AuditShowFlags, AuditShowResult>({
         if (!ctx.output) {
           throw new Error('Output not available');
         }
-        
-        // Pretty print summary
-        ctx.output.write(`Audit Report: ${result.report.ts}`);
-        ctx.output.write(`Repository: ${result.report.context.repo}`);
-        ctx.output.write(`Overall: ${result.report.overall.ok ? 'PASS' : 'FAIL'}`);
-        if (!result.report.overall.ok) {
-          ctx.output.write(`Fail reasons: ${result.report.overall.failReasons.join(', ')}`);
+
+        const summaryItems: string[] = [
+          `Report date: ${result.report.ts}`,
+          `Repository: ${result.report.context.repo}`,
+          `Overall: ${result.report.overall.ok ? ctx.output.ui.colors.success('PASS') : ctx.output.ui.colors.error('FAIL')}`,
+        ];
+
+        const sections: Array<{ header?: string; items: string[] }> = [
+          {
+            header: 'Summary',
+            items: summaryItems,
+          },
+        ];
+
+        if (!result.report.overall.ok && result.report.overall.failReasons.length > 0) {
+          sections.push({
+            header: 'Fail reasons',
+            items: result.report.overall.failReasons.map(
+              (reason) => `${ctx.output!.ui.symbols.error} ${reason}`
+            ),
+          });
         }
+
+        const outputText = ctx.output.ui.sideBox({
+          title: 'Audit Report',
+          sections,
+          status: result.report.overall.ok ? 'success' : 'error',
+          timing: ctx.tracker.total(),
+        });
+        ctx.output.write(outputText);
       }
 
       return { ok: result.report.overall.ok, report: result.report };

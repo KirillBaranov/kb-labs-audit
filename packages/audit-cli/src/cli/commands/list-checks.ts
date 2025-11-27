@@ -3,7 +3,6 @@
  */
 
 import { defineCommand, type CommandResult } from '@kb-labs/cli-command-kit';
-import { keyValue } from '@kb-labs/shared-cli-ui';
 import { ANALYTICS_EVENTS, ANALYTICS_ACTOR } from '../../infra/analytics/events.js';
 import { listChecksCore, type ListChecksRuntimeContext } from '../../application/index.js';
 
@@ -76,19 +75,25 @@ export const listChecksCommand = defineCommand<AuditListChecksFlags, AuditListCh
       if (!ctx.output) {
         throw new Error('Output not available');
       }
-      
-      const lines: string[] = [];
-      lines.push('Available audit checks:');
-      lines.push('');
 
-      const checkDisplay: Record<string, string> = {};
+      const checkItems: string[] = [];
       for (const check of result.checks) {
-        const icon = check.available ? ctx.output.ui.colors.success('✓') : ctx.output.ui.colors.error('✗');
-        checkDisplay[check.id.padEnd(12)] = `${icon} ${check.description}`;
+        const icon = check.available ? ctx.output.ui.symbols.success : ctx.output.ui.symbols.error;
+        const color = check.available ? ctx.output.ui.colors.success : ctx.output.ui.colors.error;
+        checkItems.push(`${icon} ${ctx.output.ui.colors.bold(check.id.padEnd(12))}: ${color(check.description)}`);
       }
 
-      lines.push(...keyValue(checkDisplay));
-      const outputText = ctx.output.ui.box('Audit Checks', lines);
+      const outputText = ctx.output.ui.sideBox({
+        title: 'Audit Checks',
+        sections: [
+          {
+            header: 'Available checks',
+            items: checkItems,
+          },
+        ],
+        status: 'info',
+        timing: ctx.tracker.total(),
+      });
       ctx.output.write(outputText);
     }
 

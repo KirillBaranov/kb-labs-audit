@@ -12,7 +12,7 @@ type CliCommands = NonNullable<ManifestV2['cli']>['commands'];
 const commands: CliCommands = [
   {
     manifestVersion: '1.0',
-    id: 'audit:run',
+    id: 'run',
     group: 'audit',
     describe: 'Run quality audit checks',
     longDescription: 'Run all enabled quality checks (style, types, tests, build, devlink, mind) and generate reports',
@@ -83,7 +83,7 @@ const commands: CliCommands = [
   },
   {
     manifestVersion: '1.0',
-    id: 'audit:list-checks',
+    id: 'list-checks',
     group: 'audit',
     describe: 'List available audit checks',
     flags: [
@@ -98,7 +98,7 @@ const commands: CliCommands = [
   },
   {
     manifestVersion: '1.0',
-    id: 'audit:show',
+    id: 'show',
     group: 'audit',
     describe: 'Show last audit report',
     flags: [
@@ -113,7 +113,7 @@ const commands: CliCommands = [
   },
   {
     manifestVersion: '1.0',
-    id: 'audit:clean',
+    id: 'clean',
     group: 'audit',
     describe: 'Clean audit output directory',
     flags: [],

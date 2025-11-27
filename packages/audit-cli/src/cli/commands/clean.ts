@@ -82,14 +82,34 @@ export const cleanCommand = defineCommand<AuditCleanFlags, AuditCleanResult>({
       if (!ctx.output) {
         throw new Error('Output not available');
       }
-      
+
       if (result.existed) {
-        const outputText = ctx.output.ui.box('Clean', [
-          `${ctx.output.ui.symbols.success} Audit directory cleaned: ${result.auditDir}`,
-        ]);
+        const outputText = ctx.output.ui.sideBox({
+          title: 'Clean Audit Directory',
+          sections: [
+            {
+              items: [
+                `${ctx.output.ui.symbols.success} Audit directory cleaned`,
+                `${ctx.output.ui.colors.muted(`Path: ${result.auditDir}`)}`,
+              ],
+            },
+          ],
+          status: 'success',
+          timing: ctx.tracker.total(),
+        });
         ctx.output.write(outputText);
       } else {
-        ctx.output.write(ctx.output.ui.colors.muted('Audit directory does not exist.'));
+        const outputText = ctx.output.ui.sideBox({
+          title: 'Clean Audit Directory',
+          sections: [
+            {
+              items: [ctx.output.ui.colors.muted('Audit directory does not exist.')],
+            },
+          ],
+          status: 'info',
+          timing: ctx.tracker.total(),
+        });
+        ctx.output.write(outputText);
       }
     }
 

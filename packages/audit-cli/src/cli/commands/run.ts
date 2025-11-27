@@ -6,7 +6,6 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { defineCommand, type CommandResult } from '@kb-labs/cli-command-kit';
 import {
-  keyValue,
   formatTiming,
   createProgressBar,
 } from '@kb-labs/shared-cli-ui';
@@ -259,7 +258,36 @@ export const runCommand = defineCommand<AuditRunFlags, AuditRunResult>({
           }
         }
         
-        const outputText = ctx.output.ui.box('Audit Dry Run', lines);
+        const outputText = ctx.output.ui.sideBox({
+          title: 'Audit Dry Run',
+          sections: [
+            {
+              header: 'Summary',
+              items: Object.entries(summaryInfo).map(([k, v]) => `${k}: ${v}`),
+            },
+            ...(packageList.length > 0
+              ? [
+                  {
+                    header: 'Packages to audit',
+                    items: packageList.flatMap((pkg) => {
+                      const privateLabel = pkg.package.private
+                        ? ctx.output!.ui.colors.muted(' (private)')
+                        : '';
+                      const items = [
+                        `${ctx.output!.ui.symbols.bullet} ${ctx.output!.ui.colors.bold(pkg.package.name)}${privateLabel}`,
+                      ];
+                      if (!quiet && packageList.length <= 30) {
+                        items.push(`  ${ctx.output!.ui.colors.muted(pkg.package.path)}`);
+                      }
+                      return items;
+                    }),
+                  },
+                ]
+              : []),
+          ],
+          status: 'info',
+          timing: ctx.tracker.total(),
+        });
         ctx.output.write(outputText);
       }
 
@@ -286,67 +314,75 @@ export const runCommand = defineCommand<AuditRunFlags, AuditRunResult>({
       if (!ctx.output) {
         throw new Error('Output not available');
       }
-      
-      const summaryLines: string[] = [];
 
       // Overall status
       const statusIcon = result.overall.ok ? ctx.output.ui.symbols.success : ctx.output.ui.symbols.error;
       const statusText = result.overall.ok
-        ? ctx.output.ui.colors.success('All checks passed') 
+        ? ctx.output.ui.colors.success('All checks passed')
         : ctx.output.ui.colors.error('Some checks failed');
-      summaryLines.push(`${statusIcon} ${statusText}`);
+
+      // Build sections for sideBox
+      const sections: Array<{ header?: string; items: string[] }> = [];
+
+      // Overall status section
+      const statusSection: string[] = [
+        `${statusIcon} ${statusText}`,
+      ];
 
       if (!result.overall.ok && result.overall.failReasons.length > 0) {
-        summaryLines.push('');
-        summaryLines.push(ctx.output.ui.colors.bold('Fail reasons:'));
+        statusSection.push('');
+        statusSection.push(ctx.output.ui.colors.bold('Fail reasons:'));
         for (const reason of result.overall.failReasons.slice(0, input.verbose ? 50 : 5)) {
-          summaryLines.push(`  ${ctx.output.ui.symbols.error} ${reason}`);
+          statusSection.push(`  ${ctx.output.ui.symbols.error} ${reason}`);
         }
         if (!input.verbose && result.overall.failReasons.length > 5) {
-          summaryLines.push(
+          statusSection.push(
             `  ${ctx.output.ui.colors.muted(`... and ${result.overall.failReasons.length - 5} more (use --verbose to see all)`)}`
           );
         }
       }
 
+      sections.push({
+        header: 'Status',
+        items: statusSection,
+      });
+
       // Detailed package breakdown in verbose mode
       if (input.verbose && result.packageResults && result.packageResults.length > 0) {
         const failedPackages = result.packageResults.filter((p) => !p.overall.ok);
         if (failedPackages.length > 0) {
-          summaryLines.push('');
-          summaryLines.push(ctx.output.ui.colors.bold('Detailed package errors:'));
-          summaryLines.push('');
-          
+          const packageErrorItems: string[] = [];
+
           for (const pkgResult of failedPackages) {
-            summaryLines.push(`  ${ctx.output.ui.colors.bold(pkgResult.package.name)}`);
-            summaryLines.push(`    ${ctx.output.ui.colors.muted(pkgResult.package.path)}`);
-            
+            packageErrorItems.push(`${ctx.output.ui.colors.bold(pkgResult.package.name)}`);
+            packageErrorItems.push(`  ${ctx.output.ui.colors.muted(pkgResult.package.path)}`);
+
             const failedChecks = Object.entries(pkgResult.checks).filter(
               ([, check]) => check && !check.ok
             );
-            
+
             for (const [checkId, check] of failedChecks) {
-              summaryLines.push(`    ${ctx.output.ui.symbols.error} ${checkId}:`);
+              packageErrorItems.push(`  ${ctx.output.ui.symbols.error} ${checkId}:`);
               if (check.code) {
-                summaryLines.push(`      ${ctx.output.ui.colors.muted(`Code: ${check.code}`)}`);
+                packageErrorItems.push(`    ${ctx.output.ui.colors.muted(`Code: ${check.code}`)}`);
               }
               if (check.hint) {
-                summaryLines.push(`      ${ctx.output.ui.colors.warn(check.hint)}`);
+                packageErrorItems.push(`    ${ctx.output.ui.colors.warn(check.hint)}`);
               }
-              
-              const details = (check.details && typeof check.details === 'object' 
-                ? check.details as Record<string, unknown> 
+
+              const details = (check.details && typeof check.details === 'object'
+                ? check.details as Record<string, unknown>
                 : {}) as Record<string, unknown>;
               if (details) {
                 if (details.errors !== undefined) {
-                  summaryLines.push(`      ${ctx.output.ui.colors.error(`Errors: ${details.errors}`)}`);
+                  packageErrorItems.push(`    ${ctx.output.ui.colors.error(`Errors: ${details.errors}`)}`);
                 }
                 if (details.warnings !== undefined) {
-                  summaryLines.push(`      ${ctx.output.ui.colors.warn(`Warnings: ${details.warnings}`)}`);
+                  packageErrorItems.push(`    ${ctx.output.ui.colors.warn(`Warnings: ${details.warnings}`)}`);
                 }
                 if (details.failed !== undefined) {
-                  summaryLines.push(
-                    `      ${ctx.output.ui.colors.error(`Failed tests: ${details.failed}/${details.total || '?'}`)}`
+                  packageErrorItems.push(
+                    `    ${ctx.output.ui.colors.error(`Failed tests: ${details.failed}/${details.total || '?'}`)}`
                   );
                 }
                 if (details.coverage && details.threshold) {
@@ -366,32 +402,36 @@ export const runCommand = defineCommand<AuditRunFlags, AuditRunResult>({
                     issues.push(`statements: ${cov.statements}% < ${thresh.statements}%`);
                   }
                   if (issues.length > 0) {
-                    summaryLines.push(
-                      `      ${ctx.output.ui.colors.error(`Coverage below threshold: ${issues.join(', ')}`)}`
+                    packageErrorItems.push(
+                      `    ${ctx.output.ui.colors.error(`Coverage below threshold: ${issues.join(', ')}`)}`
                     );
                   }
                 }
                 if (details.exitCode !== undefined && details.exitCode !== 0) {
-                  summaryLines.push(`      ${ctx.output.ui.colors.muted(`Exit code: ${details.exitCode}`)}`);
+                  packageErrorItems.push(`    ${ctx.output.ui.colors.muted(`Exit code: ${details.exitCode}`)}`);
                 }
                 if (details.error) {
-                  summaryLines.push(
-                    `      ${ctx.output.ui.colors.error(`Error: ${String(details.error).substring(0, 200)}`)}`
+                  packageErrorItems.push(
+                    `    ${ctx.output.ui.colors.error(`Error: ${String(details.error).substring(0, 200)}`)}`
                   );
                 }
                 if (details.tool) {
-                  summaryLines.push(`      ${ctx.output.ui.colors.muted(`Tool: ${details.tool}`)}`);
+                  packageErrorItems.push(`    ${ctx.output.ui.colors.muted(`Tool: ${details.tool}`)}`);
                 }
               }
             }
-            summaryLines.push('');
+            packageErrorItems.push('');
           }
+
+          sections.push({
+            header: 'Detailed package errors',
+            items: packageErrorItems,
+          });
         }
       }
 
-      // Check statuses
-      summaryLines.push('');
-      const checkStatuses: Record<string, string> = {};
+      // Check statuses section
+      const checkItems: string[] = [];
       for (const checkId of ['style', 'types', 'tests', 'build', 'devlink', 'mind', 'security'] as const) {
         const check = result.checks[checkId];
         if (check) {
@@ -399,38 +439,44 @@ export const runCommand = defineCommand<AuditRunFlags, AuditRunResult>({
           const status = check.ok ? ctx.output.ui.colors.success('passed') : ctx.output.ui.colors.error('failed');
           const name = checkId.padEnd(8);
           const timing = check.timingMs ? ctx.output.ui.colors.muted(` (${formatTiming(check.timingMs)})`) : '';
-          checkStatuses[name] = `${icon} ${status}${timing}`;
+          checkItems.push(`${name}: ${icon} ${status}${timing}`);
         } else {
           const name = checkId.padEnd(8);
-          checkStatuses[name] = ctx.output.ui.colors.muted('skipped');
+          checkItems.push(`${name}: ${ctx.output.ui.colors.muted('skipped')}`);
         }
       }
-      summaryLines.push(...keyValue(checkStatuses));
 
       // Package count if auditing multiple packages
       if (result.packageResults && result.packageResults.length > 1) {
-        summaryLines.push('');
         const failedCount = result.overall.failReasons.length;
         const passedCount = result.packageResults.length - failedCount;
-        summaryLines.push(
+        checkItems.push('');
+        checkItems.push(
           ctx.output.ui.colors.muted(`Packages: ${passedCount}/${result.packageResults.length} passed`)
         );
       }
 
-      // Report files
+      sections.push({
+        header: 'Checks',
+        items: checkItems,
+      });
+
+      // Report files section
       if (result.files.length > 0) {
-        summaryLines.push('');
-        summaryLines.push(ctx.output.ui.colors.bold('Reports:'));
-        for (const file of result.files) {
-          summaryLines.push(`  ${ctx.output.ui.symbols.info} ${ctx.output.ui.colors.muted(file)}`);
-        }
+        sections.push({
+          header: 'Reports',
+          items: result.files.map((file) =>
+            `${ctx.output.ui.symbols.info} ${ctx.output.ui.colors.muted(file)}`
+          ),
+        });
       }
 
-      // Timing
-      summaryLines.push('');
-      summaryLines.push(ctx.output.ui.colors.muted(`Total time: ${formatTiming(result.timingMs)}`));
-
-      const outputText = ctx.output.ui.box('Audit Results', summaryLines);
+      const outputText = ctx.output.ui.sideBox({
+        title: 'Audit Results',
+        sections,
+        status: result.overall.ok ? 'success' : 'error',
+        timing: result.timingMs,
+      });
       ctx.output.write(outputText);
     }
 
