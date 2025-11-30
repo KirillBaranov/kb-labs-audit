@@ -1,3 +1,3 @@
 // Audit checks domain
-export * from './descriptions.js';
+export * from './descriptions';
 
