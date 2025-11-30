@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { aggregateResults } from '../aggregator.js';
+import { aggregateResults } from '../aggregator';
 
 describe('aggregateResults', () => {
   it('returns ok when every check succeeds', () => {

@@ -40,17 +40,14 @@
   "dependencies": {
     "@kb-labs/audit-contracts": "link:../audit-contracts",
     "@kb-labs/core": "link:../../../kb-labs-core",
-    "@kb-labs/plugin-contracts": "link:../../../kb-labs-plugin/packages/plugin-contracts",
-    "globby": "^11.0.0",
-    "yaml": "^2.8.0"
+    "@kb-labs/plugin-contracts": "link:../../../kb-labs-plugin/packages/plugin-contracts"
   },
   "devDependencies": {
     "@kb-labs/devkit": "link:../../../kb-labs-devkit",
-    "@types/node": "^24.7.0",
-    "rimraf": "^6",
-    "tsup": "^8",
-    "typescript": "^5",
-    "vitest": "^3"
+    "@types/node": "^24.3.3",
+    "rimraf": "^6.0.1",
+    "tsup": "^8.5.0",
+    "typescript": "^5.6.3",
+    "vitest": "^3.2.4"
   }
 }
-

@@ -1,4 +1,4 @@
 // Shared utilities and constants for audit plugin
-export * from './utils.js';
-export * from './package-scope.js';
+export * from './utils';
+export * from './package-scope';
 

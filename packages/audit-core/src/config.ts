@@ -7,7 +7,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { findRepoRoot, getLogger } from '@kb-labs/core';
 import type { CoverageThresholds } from '@kb-labs/audit-contracts';
-import type { AuditConfig } from './types.js';
+import type { AuditConfig } from './types';
 
 const log = getLogger('audit-core');
 

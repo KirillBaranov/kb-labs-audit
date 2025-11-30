@@ -4,7 +4,7 @@
  */
 
 import type { CheckId, AuditCheckResult } from '@kb-labs/audit-contracts';
-import type { AuditReport } from '../types.js';
+import type { AuditReport } from '../types';
 
 /**
  * Render audit results as HTML

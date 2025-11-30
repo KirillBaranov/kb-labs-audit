@@ -1,6 +1,6 @@
-export * from './schema/base.schema.js';
-export * from './schema/list.schema.js';
-export * from './schema/report.schema.js';
-export * from './schema/run.schema.js';
+export * from './schema/base.schema';
+export * from './schema/list.schema';
+export * from './schema/report.schema';
+export * from './schema/run.schema';
 
 

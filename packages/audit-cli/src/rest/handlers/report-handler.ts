@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { AuditReportSchema } from '@kb-labs/audit-contracts';
-import { findRepoRoot } from '../../shared/utils.js';
+import { findRepoRoot } from '../../shared/utils';
 
 type HandlerContext = {
   cwd?: string;

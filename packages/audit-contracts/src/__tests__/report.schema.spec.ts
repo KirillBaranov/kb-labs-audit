@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { AuditReportSchema } from '../schema/report.schema.js';
+import { AuditReportSchema } from '../schema/report.schema';
 
 const baseReport = {
   schemaVersion: '1.0',
