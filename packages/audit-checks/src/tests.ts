@@ -2,7 +2,7 @@
  * Tests check adapter (vitest)
  */
 
-import { BaseCheckAdapter } from './base.js';
+import { BaseCheckAdapter } from './base';
 import type { AuditCheckResult, CoverageThresholds } from '@kb-labs/audit-contracts';
 import type { ShellApi } from '@kb-labs/audit-core';
 

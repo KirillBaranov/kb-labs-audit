@@ -4,20 +4,20 @@
 
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { defineCommand, type CommandResult } from '@kb-labs/cli-command-kit';
+import { defineCommand, type CommandResult } from '@kb-labs/shared-command-kit';
 import {
   formatTiming,
   createProgressBar,
 } from '@kb-labs/shared-cli-ui';
-import { ANALYTICS_EVENTS, ANALYTICS_ACTOR } from '../../infra/analytics/events.js';
+import { ANALYTICS_EVENTS, ANALYTICS_ACTOR } from '../../infra/analytics/events';
 import {
   runAuditCore,
   parseAuditFromCliFlags,
   type AuditRuntimeContext,
-} from '../../application/index.js';
+} from '../../application/index';
 import type { ShellApi } from '@kb-labs/plugin-contracts';
-import { findRepoRoot } from '../../shared/utils.js';
-import { getWorkspacePackages, filterPackagesByScope } from '../../shared/package-scope.js';
+import { findRepoRoot } from '../../shared/utils';
+import { getWorkspacePackages, filterPackagesByScope } from '../../shared/package-scope';
 
 type AuditRunFlags = {
   scope: { type: 'string'; description?: string };

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BaseCheckAdapter } from '../base.js';
+import { BaseCheckAdapter } from '../base';
 
 class TestCheck extends BaseCheckAdapter {
   id = 'style' as const;

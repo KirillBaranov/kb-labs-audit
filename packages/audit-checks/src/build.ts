@@ -6,7 +6,7 @@
 import { existsSync, statSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { BaseCheckAdapter } from './base.js';
+import { BaseCheckAdapter } from './base';
 import type { AuditCheckResult } from '@kb-labs/audit-contracts';
 import type { ShellApi } from '@kb-labs/audit-core';
 

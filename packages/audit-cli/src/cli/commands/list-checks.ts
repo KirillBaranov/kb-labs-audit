@@ -2,9 +2,9 @@
  * Audit list-checks command
  */
 
-import { defineCommand, type CommandResult } from '@kb-labs/cli-command-kit';
-import { ANALYTICS_EVENTS, ANALYTICS_ACTOR } from '../../infra/analytics/events.js';
-import { listChecksCore, type ListChecksRuntimeContext } from '../../application/index.js';
+import { defineCommand, type CommandResult } from '@kb-labs/shared-command-kit';
+import { ANALYTICS_EVENTS, ANALYTICS_ACTOR } from '../../infra/analytics/events';
+import { listChecksCore, type ListChecksRuntimeContext } from '../../application/index';
 
 type AuditListChecksFlags = {
   json: { type: 'boolean'; description?: string; default?: boolean };

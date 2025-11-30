@@ -4,13 +4,13 @@
  */
 
 import { readFile } from 'node:fs/promises';
-import { defineCommand, type CommandResult } from '@kb-labs/cli-command-kit';
-import { findRepoRoot } from '../../shared/utils.js';
-import { ANALYTICS_EVENTS, ANALYTICS_ACTOR } from '../../infra/analytics/events.js';
+import { defineCommand, type CommandResult } from '@kb-labs/shared-command-kit';
+import { findRepoRoot } from '../../shared/utils';
+import { ANALYTICS_EVENTS, ANALYTICS_ACTOR } from '../../infra/analytics/events';
 import {
   showReportCore,
   type ShowReportRuntimeContext,
-} from '../../application/index.js';
+} from '../../application/index';
 
 type AuditShowFlags = {
   json: { type: 'boolean'; description?: string; default?: boolean };

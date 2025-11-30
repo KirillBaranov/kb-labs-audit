@@ -2,7 +2,7 @@
  * Style check adapter (eslint)
  */
 
-import { BaseCheckAdapter } from './base.js';
+import { BaseCheckAdapter } from './base';
 import type { AuditCheckResult } from '@kb-labs/audit-contracts';
 import type { ShellApi } from '@kb-labs/audit-core';
 
