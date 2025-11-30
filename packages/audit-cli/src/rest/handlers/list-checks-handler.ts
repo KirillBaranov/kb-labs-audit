@@ -1,6 +1,6 @@
 import { AuditListChecksResponseSchema } from '@kb-labs/audit-contracts';
 import { createCheckRegistry } from '@kb-labs/audit-core';
-import { CHECK_DESCRIPTIONS } from '../../domain/checks/descriptions.js';
+import { CHECK_DESCRIPTIONS } from '../../domain/checks/descriptions';
 
 export async function handleListChecks() {
   const registry = await createCheckRegistry();
