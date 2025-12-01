@@ -16,10 +16,10 @@
         "packages/audit-core/src/*"
       ],
       "@kb-labs/cli-commands": [
-        "../kb-labs-cli/packages/commands/src/index.ts"
+        "../kb-labs-cli/packages/cli-commands/src/index.ts"
       ],
       "@kb-labs/cli-commands/*": [
-        "../kb-labs-cli/packages/commands/src/*"
+        "../kb-labs-cli/packages/cli-commands/src/*"
       ],
       "@kb-labs/cli-core": [
         "../kb-labs-cli/packages/cli-core/src/index.ts"
@@ -40,16 +40,16 @@
         "../kb-labs-plugin/packages/plugin-contracts/src/*"
       ],
       "@kb-labs/plugin-manifest": [
-        "../kb-labs-plugin/packages/manifest/src/index.ts"
+        "../kb-labs-plugin/packages/plugin-manifest/src/index.ts"
       ],
       "@kb-labs/plugin-manifest/*": [
-        "../kb-labs-plugin/packages/manifest/src/*"
+        "../kb-labs-plugin/packages/plugin-manifest/src/*"
       ],
       "@kb-labs/shared-cli-ui": [
-        "../kb-labs-shared/packages/cli-ui/src/index.ts"
+        "../kb-labs-shared/packages/shared-cli-ui/src/index.ts"
       ],
       "@kb-labs/shared-cli-ui/*": [
-        "../kb-labs-shared/packages/cli-ui/src/*"
+        "../kb-labs-shared/packages/shared-cli-ui/src/*"
       ],
       "@kb-labs/shared-command-kit": [
         "../kb-labs-shared/packages/shared-command-kit/src/index.ts"
