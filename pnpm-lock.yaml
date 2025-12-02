@@ -50,12 +50,9 @@ importers:
       '@kb-labs/audit-contracts':
         specifier: link:../audit-contracts
         version: link:../audit-contracts
-      execa:
-        specifier: ^8.0.0
-        version: 8.0.1
-      fs-extra:
-        specifier: ^11.0.0
-        version: 11.3.2
+      '@kb-labs/audit-core':
+        specifier: workspace:*
+        version: link:../audit-core
     devDependencies:
       '@kb-labs/devkit':
         specifier: link:../../../kb-labs-devkit
@@ -64,29 +61,23 @@ importers:
         specifier: ^11.0.0
         version: 11.0.4
       '@types/node':
-        specifier: ^24.7.0
+        specifier: ^24.3.3
         version: 24.9.2
       rimraf:
-        specifier: ^6
+        specifier: ^6.0.1
         version: 6.0.1
       tsup:
-        specifier: ^8
+        specifier: ^8.5.0
         version: 8.5.0(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
       typescript:
-        specifier: ^5
+        specifier: ^5.6.3
         version: 5.9.3
       vitest:
-        specifier: ^3
+        specifier: ^3.2.4
         version: 3.2.4(@types/node@24.9.2)
 
   packages/audit-cli:
     dependencies:
-      '@kb-labs/analytics-sdk-node':
-        specifier: link:../../../kb-labs-analytics/packages/analytics-sdk-node
-        version: link:../../../kb-labs-analytics/packages/analytics-sdk-node
-      '@kb-labs/audit-checks':
-        specifier: link:../audit-checks
-        version: link:../audit-checks
       '@kb-labs/audit-contracts':
         specifier: link:../audit-contracts
         version: link:../audit-contracts
@@ -94,23 +85,23 @@ importers:
         specifier: link:../audit-core
         version: link:../audit-core
       '@kb-labs/cli-commands':
-        specifier: link:../../../kb-labs-cli/packages/commands
-        version: link:../../../kb-labs-cli/packages/commands
+        specifier: link:../../../kb-labs-cli/packages/cli-commands
+        version: link:../../../kb-labs-cli/packages/cli-commands
       '@kb-labs/cli-core':
-        specifier: link:../../../kb-labs-cli/packages/core
-        version: link:../../../kb-labs-cli/packages/core
-      '@kb-labs/core':
-        specifier: link:../../../kb-labs-core
-        version: link:../../../kb-labs-core
+        specifier: link:../../../kb-labs-cli/packages/cli-core
+        version: link:../../../kb-labs-cli/packages/cli-core
       '@kb-labs/plugin-contracts':
         specifier: link:../../../kb-labs-plugin/packages/plugin-contracts
         version: link:../../../kb-labs-plugin/packages/plugin-contracts
       '@kb-labs/plugin-manifest':
-        specifier: link:../../../kb-labs-plugin/packages/manifest
-        version: link:../../../kb-labs-plugin/packages/manifest
+        specifier: link:../../../kb-labs-plugin/packages/plugin-manifest
+        version: link:../../../kb-labs-plugin/packages/plugin-manifest
       '@kb-labs/shared-cli-ui':
-        specifier: link:../../../kb-labs-shared/packages/cli-ui
-        version: link:../../../kb-labs-shared/packages/cli-ui
+        specifier: link:../../../kb-labs-shared/packages/shared-cli-ui
+        version: link:../../../kb-labs-shared/packages/shared-cli-ui
+      '@kb-labs/shared-command-kit':
+        specifier: link:../../../kb-labs-shared/packages/shared-command-kit
+        version: link:../../../kb-labs-shared/packages/shared-command-kit
       execa:
         specifier: ^8.0.0
         version: 8.0.1
@@ -125,19 +116,19 @@ importers:
         specifier: link:../../../kb-labs-devkit
         version: link:../../../kb-labs-devkit
       '@types/node':
-        specifier: ^24.7.0
+        specifier: ^24.3.3
         version: 24.9.2
       rimraf:
-        specifier: ^6
+        specifier: ^6.0.1
         version: 6.0.1
       tsup:
-        specifier: ^8
+        specifier: ^8.5.0
         version: 8.5.0(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
       typescript:
-        specifier: ^5
+        specifier: ^5.6.3
         version: 5.9.3
       vitest:
-        specifier: ^3
+        specifier: ^3.2.4
         version: 3.2.4(@types/node@24.9.2)
 
   packages/audit-contracts:
@@ -150,10 +141,10 @@ importers:
         specifier: link:../../../kb-labs-devkit
         version: link:../../../kb-labs-devkit
       '@types/node':
-        specifier: ^24.7.0
+        specifier: ^24.3.3
         version: 24.9.2
       eslint:
-        specifier: ^9.13.0
+        specifier: ^9
         version: 9.38.0
       rimraf:
         specifier: ^6.0.1
@@ -179,30 +170,24 @@ importers:
       '@kb-labs/plugin-contracts':
         specifier: link:../../../kb-labs-plugin/packages/plugin-contracts
         version: link:../../../kb-labs-plugin/packages/plugin-contracts
-      globby:
-        specifier: ^11.0.0
-        version: 11.1.0
-      yaml:
-        specifier: ^2.8.0
-        version: 2.8.1
     devDependencies:
       '@kb-labs/devkit':
         specifier: link:../../../kb-labs-devkit
         version: link:../../../kb-labs-devkit
       '@types/node':
-        specifier: ^24.7.0
+        specifier: ^24.3.3
         version: 24.9.2
       rimraf:
-        specifier: ^6
+        specifier: ^6.0.1
         version: 6.0.1
       tsup:
-        specifier: ^8
+        specifier: ^8.5.0
         version: 8.5.0(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
       typescript:
-        specifier: ^5
+        specifier: ^5.6.3
         version: 5.9.3
       vitest:
-        specifier: ^3
+        specifier: ^3.2.4
         version: 3.2.4(@types/node@24.9.2)
 
 packages:
@@ -1150,10 +1135,6 @@ packages:
     resolution: {integrity: sha512-gIXjKqtFuWEgzFRJA9WCQeSJLZDjgJUOMCMzxtvFq/37KojM1BFGufqsCy0r4qSQmYLsZYMeyRqzIWOMup03sw==}
     engines: {node: '>=14'}
 
-  fs-extra@11.3.2:
-    resolution: {integrity: sha512-Xr9F6z6up6Ws+NjzMCZc6WXg2YFRlrLP9NQDO3VQrWrfiojdhS56TzueT88ze0uBdCTwEIhQ3ptnmKeWGFAe0A==}
-    engines: {node: '>=14.14'}
-
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -1190,9 +1171,6 @@ packages:
   globby@11.1.0:
     resolution: {integrity: sha512-jhIXaOzy1sb8IyocaruWSn1TjmnBVs8Ayhcy83rmxNJ8q2uWKCAj3CnJY+KpGSXCueAPc0i05kVvVKtP1t9S3g==}
     engines: {node: '>=10'}
-
-  graceful-fs@4.2.11:
-    resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
   graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
@@ -1289,9 +1267,6 @@ packages:
 
   json-stable-stringify-without-jsonify@1.0.1:
     resolution: {integrity: sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==}
-
-  jsonfile@6.2.0:
-    resolution: {integrity: sha512-FGuPw30AdOIUTRMC2OMRtQV+jkVj2cfPqSeWXv1NEAJ1qZ5zb1X6z1mFhbfOB/iy3ssJCD+3KuZ8r8C3uVFlAg==}
 
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
@@ -1718,10 +1693,6 @@ packages:
 
   undici-types@7.16.0:
     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
-
-  universalify@2.0.1:
-    resolution: {integrity: sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==}
-    engines: {node: '>= 10.0.0'}
 
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
@@ -2703,12 +2674,6 @@ snapshots:
       cross-spawn: 7.0.6
       signal-exit: 4.1.0
 
-  fs-extra@11.3.2:
-    dependencies:
-      graceful-fs: 4.2.11
-      jsonfile: 6.2.0
-      universalify: 2.0.1
-
   fsevents@2.3.3:
     optional: true
 
@@ -2755,8 +2720,6 @@ snapshots:
       ignore: 5.3.2
       merge2: 1.4.1
       slash: 3.0.0
-
-  graceful-fs@4.2.11: {}
 
   graphemer@1.4.0: {}
 
@@ -2835,12 +2798,6 @@ snapshots:
   json-schema-traverse@0.4.1: {}
 
   json-stable-stringify-without-jsonify@1.0.1: {}
-
-  jsonfile@6.2.0:
-    dependencies:
-      universalify: 2.0.1
-    optionalDependencies:
-      graceful-fs: 4.2.11
 
   keyv@4.5.4:
     dependencies:
@@ -3244,8 +3201,6 @@ snapshots:
   ufo@1.6.1: {}
 
   undici-types@7.16.0: {}
-
-  universalify@2.0.1: {}
 
   uri-js@4.4.1:
     dependencies:
